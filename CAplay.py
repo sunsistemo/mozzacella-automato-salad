@@ -6,14 +6,14 @@ from time import sleep
 
 latSize = 16
 steps = 200
-evoLat = np.zeros((latSize,steps))
+evoLat = np.zeros((latSize, steps))
 init = np.zeros(latSize)
 
 def gen_rule(r, k, ruleNum):
     rule = {}
-    bruleNum = digits(ruleNum,k).zfill(k**(2*r + 1))[::-1]
-    for s in range(k**(2*r + 1)):
-        rule[digits(s,k).zfill(2*r + 1)] = int(bruleNum[s])
+    bruleNum = digits(ruleNum, k).zfill(k ** (2 * r + 1))[::-1]
+    for s in range(k ** (2 * r + 1)):
+        rule[digits(s, k).zfill(2 * r + 1)] = int(bruleNum[s])
     return rule
 
 def CA_step(oldState, rule, r):
@@ -26,7 +26,7 @@ def CA_step(oldState, rule, r):
         newState[-m] = str(rule[oldState[-r-m:] + oldState[:-m+r+1]])
     return "".join(newState)
 
-def random_state(n,k):
+def random_state(n, k):
     k = "".join(map(str, range(k)))
     return "".join([choice(k) for _ in range(n)])
 
