@@ -12,10 +12,10 @@ STATE = None
 
 def seed_gen(n=261):
     global STATE
-    STATE = list(bin(int.from_bytes(os.urandom(33), byteorder="little"))[2:][:n])
+    STATE = list(map(int, bin(int.from_bytes(os.urandom(n // 8 + 1), byteorder="little"))[2:][:n]))
 
 def step(a, b, c):
-    return int(a) ^ (int(b) or int(c))
+    return a ^ (b or c)
 
 def evolve_state():
     global STATE
