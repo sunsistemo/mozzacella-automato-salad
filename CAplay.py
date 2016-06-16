@@ -2,7 +2,7 @@ import numpy as np
 from random import random, choice, randint
 from gmpy2 import digits
 from time import sleep
-
+from optparse import OptionParser
 
 latSize = 16
 steps = 200
@@ -33,11 +33,7 @@ def random_state(n, k):
 def make_colormap(k):
     return {str(i): "\033[3%dm%d\033[0m" % (1 + i, i) for i in range(k)}
 
-def CA_print(r=1, k=2, rule_number=-1):
-    if rule_number < 0 or rule_number >= k**(k**(2*r + 1)):
-        print("No proper rule number given for this CA setting, generating random rule...")
-        sleep(3)
-        rule_number = randint(0, k**(k**(2*r + 1)))
+def CA_print(r=1, k=2, rule_number=-1):    
     rule = gen_rule(r, k, rule_number)
     # print(rule)
     state = random_state(150, k)
@@ -54,4 +50,22 @@ def CA_print(r=1, k=2, rule_number=-1):
 
 
 if __name__ == "__main__":
-    CA_print(1, 2, 127)
+    parser = OptionParser()
+    parser.set_defaults(rule_number='30', num_neighbour='1', num_colors='2')
+    parser.add_option('-r', '--rule', dest='rule_number',
+                  help='Rule number to generate random number')
+    parser.add_option('-n', '--neighbour', dest='num_neighbour',
+                  help='Radius of neighbours')
+    parser.add_option('-c', '--color', dest='num_colors',
+                  help='Number of colors')                  
+    (options, args) = parser.parse_args()
+    
+    rule_number = int(options.rule_number)
+    r = int(options.num_neighbour)
+    k = int(options.num_colors)
+    
+    if rule_number < 0 or rule_number >= k**(k**(2*r + 1)):
+        print("No proper rule number given for this CA setting, generating random rule...")
+        sleep(3)
+        rule_number = randint(0, k**(k**(2*r + 1)))
+    CA_print(r, k, rule_number)
