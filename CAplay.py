@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 from random import random, choice, randint
 from gmpy2 import digits
 from time import sleep
@@ -33,10 +35,10 @@ def random_state(n, k):
 def make_colormap(k):
     return {str(i): "\033[3%dm%d\033[0m" % (1 + i, i) for i in range(k)}
 
-def CA_print(r=1, k=2, rule_number=-1):    
+def CA_print(r=1, k=2, rule_number=-1):
     rule = gen_rule(r, k, rule_number)
     # print(rule)
-    state = random_state(150, k)
+    state = random_state(size, k)
     colormap = make_colormap(k)
     try:
         while True:
@@ -44,6 +46,38 @@ def CA_print(r=1, k=2, rule_number=-1):
             print(pstate)
             sleep(.1)
             state = CA_step(state, rule, r)
+    except KeyboardInterrupt:
+        print("Rule number: %d" % rule_number)
+
+def init():
+    ca_im.set_array(np.ma.array(window))
+    return ca_im
+
+
+def animate(frame_number):
+    window[:-1] = window[1:]
+    window[-1] = CA_step(state, rule, r)
+    ca_im.set_array(window)
+    return ca_im
+
+def start_animation():
+    ani = animation.FuncAnimation(fig, animate, None, init_func=init, interval=10, blit=True)
+    plt.show()
+
+def CA_show(r=1, k=2, rule_number=-1, size=150):
+    global ca_im, window, ax, ax2, fig
+    window = np.zeros((150, size))
+    fig, (ax,ax2) = plt.subplots(1, 2)
+    ca_im = ax.imshow(window)
+
+    if rule_number < 0 or rule_number >= k**(k**(2*r + 1)):
+        print("No proper rule number given for this CA setting, generating random rule...")
+        sleep(2.5)
+        rule_number = randint(0, k**(k**(2*r + 1)))
+    rule = gen_rule(r, k, rule_number)
+    state = random_state(size, k)
+    try:
+        start_animation()
     except KeyboardInterrupt:
         print("Rule number: %d" % rule_number)
 
@@ -57,13 +91,13 @@ if __name__ == "__main__":
     parser.add_option('-n', '--neighbour', dest='num_neighbour',
                   help='Radius of neighbours')
     parser.add_option('-c', '--color', dest='num_colors',
-                  help='Number of colors')                  
+                  help='Number of colors')
     (options, args) = parser.parse_args()
-    
+
     rule_number = int(options.rule_number)
     r = int(options.num_neighbour)
     k = int(options.num_colors)
-    
+
     if rule_number < 0 or rule_number >= k**(k**(2*r + 1)):
         print("No proper rule number given for this CA setting, generating random rule...")
         sleep(3)
