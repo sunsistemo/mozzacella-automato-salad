@@ -2,18 +2,21 @@ import random
 import os
 import sys
 from time import sleep
+from tqdm import trange
 
+import numpy as np
 import matplotlib.pyplot as plt
+
 
 STATE = None
 
 def seed_gen(n=261):
     global STATE
-    STATE = list(bin(int.from_bytes(os.urandom(33),byteorder="little"))[2:][:n])
-        
+    STATE = list(bin(int.from_bytes(os.urandom(33), byteorder="little"))[2:][:n])
+
 def step(a, b, c):
     return int(a) ^ (int(b) or int(c))
-        
+
 def evolve_state():
     global STATE
     state = STATE
@@ -28,15 +31,15 @@ def print_ca():
     global STATE
     seed_gen()
     for i in range(t):
-       STATE = evolve_state()
-       print("".join([str(i) for i in STATE]))
-       sleep(0.2)
-       
+        STATE = evolve_state()
+        print("".join([str(i) for i in STATE]))
+        sleep(0.2)
+
 def randbit():
     global STATE
     evolve_state()
     return STATE[0]
-    
+
 def randint(a, b):
     """a and b are ints such that a < b."""
     interval = b - a
@@ -50,18 +53,20 @@ def randint(a, b):
     for i in range(num_bits):
         bits[i] = randbit()
     return a + int("".join(map(str, bits)), 2)
-    
+
 def random_backup():
     import webbrowser
     webbrowser.open("http://random.org")
 
 def plot_uniform():
-    nums = [randint(0, 1024) for _ in range(int(1E9))]
-    plt.hist(nums)
+    n = int(1E4)
+    b = 32
+    nums = np.zeros(n)
+    for i in trange(n):
+        nums[i] = randint(0, b)
+    plt.hist(nums, bins=b)
     plt.show()
-        
-seed_gen()
 
 if __name__ == "__main__":
+    seed_gen()
     plot_uniform()
-        
