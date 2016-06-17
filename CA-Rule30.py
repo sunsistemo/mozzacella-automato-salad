@@ -69,12 +69,18 @@ def plot_uniform(nums, b):
     plt.show()
 
 def frequency_test(nums):
-    pass
-
+    bin_nums = [x[2:].zfill(5) for x in list(map(bin,map(int,nums)))]
+    num_ones  = 0
+    num_zeros = 0
+    for b in bin_nums:
+        num_ones  += b.count("1")
+        num_zeros += b.count("0")
+    print("Frequency Test: [#0: %d], [#1: %d]" % (num_zeros, num_ones))
+    
 if __name__ == "__main__":
     seed_gen()
     n = int(1E4)
     b = 32
     nums = generate_nums(n, b)
     plot_uniform(nums, b)
-    
+    frequency_test(nums)
