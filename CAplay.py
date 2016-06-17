@@ -35,7 +35,7 @@ def random_state(n, k):
 def make_colormap(k):
     return {str(i): "\033[3%dm%d\033[0m" % (1 + i, i) for i in range(k)}
 
-def CA_print(r=1, k=2, rule_number=-1):
+def CA_print(r=1, k=2, rule_number=-1, size=150):
     rule = gen_rule(r, k, rule_number)
     # print(rule)
     state = random_state(size, k)
