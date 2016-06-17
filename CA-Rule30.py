@@ -58,15 +58,23 @@ def random_backup():
     import webbrowser
     webbrowser.open("http://random.org")
 
-def plot_uniform():
-    n = int(1E4)
-    b = 32
+def generate_nums(n=int(1E4),b=32):
     nums = np.zeros(n)
     for i in trange(n):
         nums[i] = randint(0, b)
+    return nums
+
+def plot_uniform(nums, b):
     plt.hist(nums, bins=b)
     plt.show()
 
+def frequency_test(nums):
+    pass
+
 if __name__ == "__main__":
     seed_gen()
-    plot_uniform()
+    n = int(1E4)
+    b = 32
+    nums = generate_nums(n, b)
+    plot_uniform(nums, b)
+    
