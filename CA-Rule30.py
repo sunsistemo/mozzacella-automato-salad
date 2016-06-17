@@ -3,6 +3,7 @@ import os
 import sys
 from time import sleep
 from tqdm import trange
+from optparse import OptionParser
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -68,8 +69,8 @@ def plot_uniform(nums, b):
     plt.hist(nums, bins=b)
     plt.show()
 
-def frequency_test(nums):
-    bin_nums = [x[2:].zfill(5) for x in list(map(bin,map(int,nums)))]
+def frequency_test(nums, b):
+    bin_nums = [x[2:].zfill(int.bit_length(b-1)) for x in list(map(bin,map(int,nums)))] # 
     num_ones  = 0
     num_zeros = 0
     for b in bin_nums:
@@ -78,9 +79,15 @@ def frequency_test(nums):
     print("Frequency Test: [#0: %d], [#1: %d]" % (num_zeros, num_ones))
     
 if __name__ == "__main__":
+    parser = OptionParser()
+    parser.set_defaults(num_gens=int(1E4))
+    parser.add_option('-n', dest='num_gens',
+                  help='Number of random numbers to generate')
+    (options, args) = parser.parse_args()
+        
     seed_gen()
-    n = int(1E4)
+    n = int(options.num_gens)
     b = 32
     nums = generate_nums(n, b)
     plot_uniform(nums, b)
-    frequency_test(nums)
+    frequency_test(nums, b)
