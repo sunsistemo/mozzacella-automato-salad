@@ -1,13 +1,16 @@
-import random
 import os
 import sys
 from time import sleep
 from optparse import OptionParser
 
 
-from tqdm import trange
-import numpy as np
-import matplotlib.pyplot as plt
+from builtins import int
+try:
+    from tqdm import trange
+    import numpy as np
+    import matplotlib.pyplot as plt
+except ImportError:
+    pass
 
 
 STATE = None
@@ -62,7 +65,7 @@ def random_backup():
     webbrowser.open("http://random.org")
 
 def generate_nums(n=int(1E4), b=32):
-    nums = np.zeros(n)
+    nums = [0] * n
     for i in trange(n):
         nums[i] = randint(0, b)
     return nums
@@ -71,8 +74,12 @@ def diehard(a, b):
     num_bits = len(bin(b - a)[2:]) - 1
     num_bytes = num_bits // 8
     assert num_bits == 8 * num_bytes
+    if sys.version_info.major >= 3:
+        write = sys.stdout.buffer.write
+    else:
+        write = sys.stdout.write
     while True:
-        sys.stdout.buffer.write(randint(a, b, num_bits).to_bytes(num_bytes, byteorder="little"))
+        write(randint(a, b, num_bits).to_bytes(num_bytes, byteorder="little"))
 
 def plot_uniform(nums, b):
     plt.hist(nums, bins=b)
