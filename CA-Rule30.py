@@ -2,9 +2,10 @@ import random
 import os
 import sys
 from time import sleep
-from tqdm import trange
 from optparse import OptionParser
 
+
+from tqdm import trange
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -28,13 +29,13 @@ def evolve_state():
     newstate[-1] = step(state[-2], state[-1], state[0])
     STATE = newstate
 
-def print_ca():
+def print_ca(size=100):
     global STATE
-    seed_gen()
-    for i in range(t):
-        STATE = evolve_state()
+    seed_gen(size)
+    while True:
+        evolve_state()
         print("".join([str(i) for i in STATE]))
-        sleep(0.2)
+        sleep(0.02)
 
 def randbit():
     global STATE
