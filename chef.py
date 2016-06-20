@@ -4,9 +4,12 @@ import json
 
 
 def cook(r):
-    num_bytes = 50
+    num_bytes = 500000
     command = "python3 salad.py --bytestream -r %d | pv -S -s %d | ent -t" % (r, num_bytes)
-    output = subprocess.check_output(command, shell=True)
+    try:
+        output = subprocess.check_output(command, shell=True)
+    except (CalledProcessError, BrokenPipeError, IOError):
+        pass
     output = output.decode("utf-8")
     output = output.split('\n')[:-1]
     headers, values = [d.split(',')[1:] for d in output]
@@ -15,7 +18,7 @@ def cook(r):
 
 def main():
     data = {}
-    p = multiprocessing.Pool()
+    p = multiprocessing.Pool(4)
     rules = range(256)
     output = p.map(cook, rules)
     for i, d in enumerate(output):

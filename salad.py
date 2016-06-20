@@ -92,7 +92,12 @@ def bytestream(r, k, rule_number):
     while True:
         c = randint(a, b, rule, r, num_bits)
         # print(c)
-        write(c.to_bytes(num_bytes, byteorder="little"))
+        try:
+            write(c.to_bytes(num_bytes, byteorder="little"))
+        except (BrokenPipeError, IOError):
+            sys.stderr.close()
+            sys.exit(1)
+        
 
 def main():
     global STATE
