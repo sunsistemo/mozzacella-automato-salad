@@ -70,7 +70,7 @@ def generate_nums(n=int(1E4), b=32):
         nums[i] = randint(0, b)
     return nums
 
-def diehard(a, b):
+def bytestream(a, b):
     num_bits = len(bin(b - a)[2:]) - 1
     num_bytes = num_bits // 8
     assert num_bits == 8 * num_bytes
@@ -93,20 +93,24 @@ def frequency_test(nums, b):
         num_ones  += b.count("1")
         num_zeros += b.count("0")
     print("Frequency Test: [#0: %d], [#1: %d]" % (num_zeros, num_ones))
-    
-if __name__ == "__main__":
+
+def main():
     parser = OptionParser()
     parser.set_defaults(num_gens=int(1E4))
     parser.add_option('-n', dest='num_gens',
                   help='Number of random numbers to generate')
-    parser.add_option("--bitstream", action="store_true")
+    parser.add_option("-b", "--bytestream", action="store_true")
     (options, args) = parser.parse_args()
-        
+
     seed_gen()
     n = int(options.num_gens)
     b = 32
     if options.bitstream:
-        diehard(0, 2 ** 8)
+        return bytestream(0, 2 ** 8)
     nums = generate_nums(n, b)
     plot_uniform(nums, b)
     frequency_test(nums, b)
+
+
+if __name__ == "__main__":
+    main()
