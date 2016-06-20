@@ -42,15 +42,16 @@ def randbit():
     evolve_state()
     return STATE[0]
 
-def randint(a, b):
+def randint(a, b, num_bits=None):
     """a and b are ints such that a < b."""
-    interval = b - a
-    is_power_of_two = sum(int(i) for i in bin(interval)[2:]) == 1
-    if not is_power_of_two:
-        print("So long sucker!")
-        random_backup()
-        sys.exit()
-    num_bits = len(bin(interval)[2:]) - 1
+    if num_bits is None:
+        interval = b - a
+        is_power_of_two = sum(int(i) for i in bin(interval)[2:]) == 1
+        if not is_power_of_two:
+            print("So long sucker!")
+            random_backup()
+            sys.exit()
+        num_bits = len(bin(interval)[2:]) - 1
     bits = [0] * num_bits
     for i in range(num_bits):
         bits[i] = randbit()
@@ -60,11 +61,18 @@ def random_backup():
     import webbrowser
     webbrowser.open("http://random.org")
 
-def generate_nums(n=int(1E4),b=32):
+def generate_nums(n=int(1E4), b=32):
     nums = np.zeros(n)
     for i in trange(n):
         nums[i] = randint(0, b)
     return nums
+
+def diehard(a, b):
+    num_bits = len(bin(b - a)[2:]) - 1
+    num_bytes = num_bits // 8
+    assert num_bits == 8 * num_bytes
+    while True:
+        sys.stdout.buffer.write(randint(a, b, num_bits).to_bytes(num_bytes, byteorder="little"))
 
 def plot_uniform(nums, b):
     plt.hist(nums, bins=b)
@@ -84,11 +92,14 @@ if __name__ == "__main__":
     parser.set_defaults(num_gens=int(1E4))
     parser.add_option('-n', dest='num_gens',
                   help='Number of random numbers to generate')
+    parser.add_option("--bitstream", action="store_true")
     (options, args) = parser.parse_args()
         
     seed_gen()
     n = int(options.num_gens)
     b = 32
+    if options.bitstream:
+        diehard(0, 2 ** 8)
     nums = generate_nums(n, b)
     plot_uniform(nums, b)
     frequency_test(nums, b)
