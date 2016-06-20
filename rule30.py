@@ -105,7 +105,7 @@ def main():
     seed_gen()
     n = int(options.num_gens)
     b = 32
-    if options.bitstream:
+    if options.bytestream:
         return bytestream(0, 2 ** 8)
     nums = generate_nums(n, b)
     plot_uniform(nums, b)
