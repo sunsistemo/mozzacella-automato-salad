@@ -1,15 +1,22 @@
+from time import sleep
+from optparse import OptionParser
+import sys
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from random import random, choice, randint
+from random import random, choice
 from gmpy2 import digits
-from time import sleep
-from optparse import OptionParser
+
+from rule30 import random_backup
+
 
 latSize = 16
 steps = 200
 evoLat = np.zeros((latSize, steps))
 init = np.zeros(latSize)
+
+STATE = None
 
 def gen_rule(r, k, ruleNum):
     rule = {}
@@ -18,7 +25,9 @@ def gen_rule(r, k, ruleNum):
         rule[digits(s, k).zfill(2 * r + 1)] = int(bruleNum[s])
     return rule
 
-def CA_step(oldState, rule, r):
+def step(rule, r):
+    global STATE
+    oldState = STATE
     newState = ["0"] * len(oldState)
     for n in range(r):
         newState[n] = str(rule[oldState[-r+n:] + oldState[:r+n+1]])
@@ -26,7 +35,7 @@ def CA_step(oldState, rule, r):
         newState[i] = str(rule[oldState[i-r:i+r+1]])
     for m in range(1, r + 1):
         newState[-m] = str(rule[oldState[-r-m:] + oldState[:-m+r+1]])
-    return "".join(newState)
+    STATE = "".join(newState)
 
 def random_state(n, k):
     k = "".join(map(str, range(k)))
@@ -45,45 +54,48 @@ def CA_print(r=1, k=2, rule_number=-1, size=150):
             pstate = "".join([colormap[c] for c in state])
             print(pstate)
             sleep(.1)
-            state = CA_step(state, rule, r)
+            state = step(rule, r)
     except KeyboardInterrupt:
         print("Rule number: %d" % rule_number)
 
-def init():
-    ca_im.set_array(np.ma.array(window))
-    return ca_im
+def randbit(rule, r):
+    global STATE
+    step(rule, r)
+    return int(STATE[0])
 
+def randint(a, b, rule, r, num_bits=None):
+    """a and b are ints such that a < b."""
+    if num_bits is None:
+        interval = b - a
+        is_power_of_two = sum(int(i) for i in bin(interval)[2:]) == 1
+        if not is_power_of_two:
+            print("So long sucker!")
+            random_backup()
+            sys.exit()
+        num_bits = len(bin(interval)[2:]) - 1
+    bits = [0] * num_bits
+    for i in range(num_bits):
+        bits[i] = randbit(rule, r)
+    return a + int("".join(map(str, bits)), 2)
 
-def animate(frame_number):
-    window[:-1] = window[1:]
-    window[-1] = CA_step(state, rule, r)
-    ca_im.set_array(window)
-    return ca_im
-
-def start_animation():
-    ani = animation.FuncAnimation(fig, animate, None, init_func=init, interval=10, blit=True)
-    plt.show()
-
-def CA_show(r=1, k=2, rule_number=-1, size=150):
-    global ca_im, window, ax, ax2, fig
-    window = np.zeros((150, size))
-    fig, (ax,ax2) = plt.subplots(1, 2)
-    ca_im = ax.imshow(window)
-
-    if rule_number < 0 or rule_number >= k**(k**(2*r + 1)):
-        print("No proper rule number given for this CA setting, generating random rule...")
-        sleep(2.5)
-        rule_number = randint(0, k**(k**(2*r + 1)))
+def bytestream(r, k, rule_number):
+    a, b = 0, 2 ** 8
+    num_bits = len(bin(b - a)[2:]) - 1
+    num_bytes = num_bits // 8
+    assert num_bits == 8 * num_bytes
     rule = gen_rule(r, k, rule_number)
-    state = random_state(size, k)
-    try:
-        start_animation()
-    except KeyboardInterrupt:
-        print("Rule number: %d" % rule_number)
+    if sys.version_info.major >= 3:
+        write = sys.stdout.buffer.write
+    else:
+        write = sys.stdout.write
 
+    while True:
+        c = randint(a, b, rule, r, num_bits)
+        # print(c)
+        write(c.to_bytes(num_bytes, byteorder="little"))
 
-
-if __name__ == "__main__":
+def main():
+    global STATE
     parser = OptionParser()
     parser.set_defaults(rule_number='30', num_neighbour='1', num_colors='2')
     parser.add_option('-r', '--rule', dest='rule_number',
@@ -92,14 +104,24 @@ if __name__ == "__main__":
                   help='Radius of neighbours')
     parser.add_option('-c', '--color', dest='num_colors',
                   help='Number of colors')
+    parser.add_option("-b", "--bytestream", action="store_true")
     (options, args) = parser.parse_args()
 
     rule_number = int(options.rule_number)
     r = int(options.num_neighbour)
     k = int(options.num_colors)
+    n = 261
+    STATE = random_state(n, k)
+
+    if options.bytestream:
+        return bytestream(r, k, rule_number)
 
     if rule_number < 0 or rule_number >= k**(k**(2*r + 1)):
         print("No proper rule number given for this CA setting, generating random rule...")
         sleep(3)
         rule_number = randint(0, k**(k**(2*r + 1)))
     CA_print(r, k, rule_number)
+
+
+if __name__ == "__main__":
+    main()
