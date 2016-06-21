@@ -53,7 +53,7 @@ five = read_results("results-500ksamples.json")
 for d in (two, five):
     d["pi_deviation"] = np.abs(d["Monte-Carlo-Pi"] - np.pi)
     d["mean_deviation"] = np.abs(d["Mean"] - 255 / 2)
-    d["p-value"] = np.chisqprob(d["Chi-square"], 255)
+    d["p-value"] = chisqprob(d["Chi-square"], 255)
     d["rule"] = range(256)
 
 rand2 = two[(two["Entropy"] > 6.9) & (two["pi_deviation"] < 0.3 * np.pi)]
