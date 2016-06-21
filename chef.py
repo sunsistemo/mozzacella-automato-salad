@@ -3,6 +3,7 @@ import subprocess
 import json
 
 
+import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -40,19 +41,21 @@ def read_results(filename):
     for d in data:
         for k, v in variables.items():
             v.append(data[d][k])
-    results = [np.array(r) for r in results]
-    return results
+    results = np.array([np.array(r) for r in results]).T
+    headers = ["File-bytes", "Entropy", "Chi-square", "Mean", "Monte-Carlo-Pi", "Serial-Correlation"]
+    return pd.DataFrame(results, columns=headers)
 
 two = read_results("results-200ksamples.json")
-File_bytes, Entropy, Chi_square, Mean, Monte_Carlo_Pi, Serial_Correlation = two
-x = range(256)
+five = read_results("results-500ksamples.json")
 
-pi = np.abs(Monte_Carlo_Pi - np.pi)
-mean = np.abs(Mean - 255 / 2)
+for d in (two, five):
+    d["pi_deviation"] = np.abs(d["Monte-Carlo-Pi"] - np.pi)
+    d["mean_deviation"] = np.abs(d["Mean"] - 255 / 2)
 
-plt.semilogy(x, mean)
-# plt.plot(x, pi)
-plt.show()
+
+# plt.semilogy(x, Serial_Correlation)
+# plt.plot(x, Serial_Correlation)
+# plt.show()
 
 if __name__ == "__main__":
     main()
