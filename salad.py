@@ -32,7 +32,7 @@ def step(rule, r):
     newState = ["0"] * len(oldState)
     for n in range(r):
         newState[n] = str(rule[oldState[-r+n:] + oldState[:r+n+1]])
-    for i in range(r, len(oldState) -  r):
+    for i in range(r, len(oldState) - r):
         newState[i] = str(rule[oldState[i-r:i+r+1]])
     for m in range(1, r + 1):
         newState[-m] = str(rule[oldState[-r-m:] + oldState[:-m+r+1]])
@@ -97,6 +97,15 @@ def randint(a, b, rule, r, num_bits=None):
 #         rand = int("".join(map(str, bits)), 2)
 #     return a + rand
 
+def bitstream(r, k, rule_number):
+    rule = gen_rule(r, k, rule_number)
+    write = sys.stdout.write
+    bitstring = {1: '1', 0: '0'}   # this is 4x faster than str !!!
+
+    while True:
+        bits = [bitstring[randbit(rule, r)] for _ in range(1024)]
+        write("".join(bits))
+
 def bytestream(r, k, rule_number):
     a, b = 0, 2 ** 8
     num_bits = len(bin(b - a)[2:]) - 1
@@ -110,7 +119,6 @@ def bytestream(r, k, rule_number):
 
     while True:
         c = randint(a, b, rule, r, num_bits)
-        # print(c)
         try:
             write(c.to_bytes(num_bytes, byteorder="little"))
         except (BrokenPipeError, IOError):
@@ -128,7 +136,8 @@ def main():
                   help='Radius of neighbours')
     parser.add_option('-c', '--color', dest='num_colors',
                   help='Number of colors')
-    parser.add_option("-b", "--bytestream", action="store_true")
+    parser.add_option("-B", "--bytestream", action="store_true")
+    parser.add_option("-b", "--bitstream", action="store_true")
     (options, args) = parser.parse_args()
 
     rule_number = int(options.rule_number)
@@ -139,6 +148,8 @@ def main():
 
     if options.bytestream:
         return bytestream(r, k, rule_number)
+    elif options.bitstream:
+        return bitstream(r, k, rule_number)
 
     if rule_number < 0 or rule_number >= k**(k**(2*r + 1)):
         print("No proper rule number given for this CA setting, generating random rule...")

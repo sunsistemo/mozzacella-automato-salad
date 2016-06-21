@@ -54,7 +54,10 @@ for d in (two, five):
     d["rule"] = range(256)
 
 rand2 = two[(two["Entropy"] > 6.9) & (two["pi_deviation"] < 0.3 * np.pi)]
-rand5 = five[(five["Entropy"] > 6.9) & (five["pi_deviation"] < 0.3 * np.pi)]
+
+rand5 = five[(five["Entropy"] > 6.9) &
+             (five["pi_deviation"] < 0.3 * np.pi) &
+             (five["mean_deviation"] < 0.1 * 255 / 2)]
 
 # The 1D CA rules that are random according to the paper
 # "When are cellular automata random?" (http://stacks.iop.org/0295-5075/84/i=5/a=50005)
