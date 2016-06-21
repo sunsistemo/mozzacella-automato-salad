@@ -78,8 +78,16 @@ def bytestream(a, b):
         write = sys.stdout.buffer.write
     else:
         write = sys.stdout.write
+
     while True:
-        write(randint(a, b, num_bits).to_bytes(num_bytes, byteorder="little"))
+        write(bytearray([randint(a, b, num_bits) for _ in range(2 ** 12)]))
+
+def bitstream():
+    write = sys.stdout.write
+    bitstring = {1: '1', 0: '0'}
+    while True:
+        bits = [bitstring[randbit()] for _ in range(8192)]
+        write("".join(bits))
 
 def plot_uniform(nums, b):
     plt.hist(nums, bins=b)
@@ -99,7 +107,8 @@ def main():
     parser.set_defaults(num_gens=int(1E4))
     parser.add_option('-n', dest='num_gens',
                   help='Number of random numbers to generate')
-    parser.add_option("-b", "--bytestream", action="store_true")
+    parser.add_option("-B", "--bytestream", action="store_true")
+    parser.add_option("-b", "--bitstream", action="store_true")
     (options, args) = parser.parse_args()
 
     seed_gen()
@@ -107,6 +116,8 @@ def main():
     b = 32
     if options.bytestream:
         return bytestream(0, 2 ** 8)
+    elif options.bitstream:
+        return bitstream()
     nums = generate_nums(n, b)
     plot_uniform(nums, b)
     frequency_test(nums, b)
