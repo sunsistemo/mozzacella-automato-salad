@@ -2,6 +2,7 @@ from time import sleep
 from optparse import OptionParser
 import sys
 
+import math
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -45,16 +46,17 @@ def make_colormap(k):
     return {str(i): "\033[3%dm%d\033[0m" % (1 + i, i) for i in range(k)}
 
 def CA_print(r=1, k=2, rule_number=-1, size=150):
+    global STATE
     rule = gen_rule(r, k, rule_number)
     # print(rule)
-    state = random_state(size, k)
+    STATE = random_state(size, k)
     colormap = make_colormap(k)
     try:
         while True:
-            pstate = "".join([colormap[c] for c in state])
+            pstate = "".join([colormap[c] for c in STATE])
             print(pstate)
             sleep(.1)
-            state = step(rule, r)
+            step(rule, r)
     except KeyboardInterrupt:
         print("Rule number: %d" % rule_number)
 
@@ -78,11 +80,28 @@ def randint(a, b, rule, r, num_bits=None):
         bits[i] = randbit(rule, r)
     return a + int("".join(map(str, bits)), 2)
 
+# Future randint function for any interval (not power of two) and multiple colors
+# def randint(a, b, rule, r = None, num_bits=None):
+#     """a and b are ints such that a < b."""
+#     if num_bits is None:
+#         interval = b - a
+#         num_bits = math.ceil(math.log(interval,2))
+#     bits = [0] * num_bits
+#     if r is None:
+#         r = (len(list(rule.keys())[0]) - 1)//2
+#     rand = interval
+#     while rand >= interval:
+
+#         for i in range(num_bits):
+#             bits[i] = randbit(rule, r)
+#         rand = int("".join(map(str, bits)), 2)
+#     return a + rand
+
 def bytestream(r, k, rule_number):
     a, b = 0, 2 ** 8
     num_bits = len(bin(b - a)[2:]) - 1
     num_bytes = num_bits // 8
-    assert num_bits == 8 * num_bytes
+    assert num_bits == 8 * num_bytes # why? it is defined this way
     rule = gen_rule(r, k, rule_number)
     if sys.version_info.major >= 3:
         write = sys.stdout.buffer.write
@@ -126,7 +145,6 @@ def main():
         sleep(3)
         rule_number = randint(0, k**(k**(2*r + 1)))
     CA_print(r, k, rule_number)
-
 
 if __name__ == "__main__":
     main()
