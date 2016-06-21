@@ -117,7 +117,6 @@ def bytestream(r, k, rule_number):
             sys.stderr.close()
             sys.exit(1)
 
-
 def main():
     global STATE
     parser = OptionParser()
