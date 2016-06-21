@@ -78,8 +78,9 @@ def bytestream(a, b):
         write = sys.stdout.buffer.write
     else:
         write = sys.stdout.write
+
     while True:
-        write(randint(a, b, num_bits).to_bytes(num_bytes, byteorder="little"))
+        write(bytearray([randint(a, b, num_bits) for _ in range(2 ** 12)]))
 
 def bitstream():
     write = sys.stdout.write

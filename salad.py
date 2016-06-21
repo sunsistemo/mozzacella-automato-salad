@@ -110,7 +110,7 @@ def bytestream(r, k, rule_number):
     a, b = 0, 2 ** 8
     num_bits = len(bin(b - a)[2:]) - 1
     num_bytes = num_bits // 8
-    assert num_bits == 8 * num_bytes # why? it is defined this way
+    assert num_bits == 8 * num_bytes
     rule = gen_rule(r, k, rule_number)
     if sys.version_info.major >= 3:
         write = sys.stdout.buffer.write
@@ -118,9 +118,8 @@ def bytestream(r, k, rule_number):
         write = sys.stdout.write
 
     while True:
-        c = randint(a, b, rule, r, num_bits)
         try:
-            write(c.to_bytes(num_bytes, byteorder="little"))
+            write(bytearray([randint(a, b, rule, r, num_bits) for _ in range(2 ** 12)]))
         except (BrokenPipeError, IOError):
             sys.stderr.close()
             sys.exit(1)
