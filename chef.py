@@ -6,6 +6,8 @@ import json
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy import integrate
+from scipy.stats import chisqprob
 
 
 def cook(r):
@@ -42,7 +44,7 @@ def read_results(filename):
         for k, v in variables.items():
             v.append(data[str(i)][k])
     results = np.array([np.array(r) for r in results]).T
-    headers = ["File-bytes", "Entropy", "Chi-square", "Mean", "Monte-Carlo-Pi", "Serial-Correlation"]
+    headers = ["File-bytes", "Entropy", "Chi-square",  "Mean", "Monte-Carlo-Pi", "Serial-Correlation"]
     return pd.DataFrame(results, columns=headers)
 
 two = read_results("results-200ksamples.json")
@@ -51,6 +53,7 @@ five = read_results("results-500ksamples.json")
 for d in (two, five):
     d["pi_deviation"] = np.abs(d["Monte-Carlo-Pi"] - np.pi)
     d["mean_deviation"] = np.abs(d["Mean"] - 255 / 2)
+    d["p-value"] = chisqprob(d["Chi-square"], 255)
     d["rule"] = range(256)
 
 rand2 = two[(two["Entropy"] > 6.9) & (two["pi_deviation"] < 0.3 * np.pi)]
