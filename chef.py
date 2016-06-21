@@ -51,9 +51,16 @@ five = read_results("results-500ksamples.json")
 for d in (two, five):
     d["pi_deviation"] = np.abs(d["Monte-Carlo-Pi"] - np.pi)
     d["mean_deviation"] = np.abs(d["Mean"] - 255 / 2)
+    d["rule"] = range(256)
+
+rand2 = two[(two["Entropy"] > 6.9) & (two["pi_deviation"] < 0.3 * np.pi)]
+rand5 = five[(five["Entropy"] > 6.9) & (five["pi_deviation"] < 0.3 * np.pi)]
+
+# The 1D CA rules that are random according to the paper
+# "When are cellular automata random?" (http://stacks.iop.org/0295-5075/84/i=5/a=50005)
+rands_paper = set([15, 30, 75, 90, 60, 105, 120, 150, 210, 240, 85, 149, 101, 165, 153, 105, 169, 150, 166, 170, 15, 135, 45, 165, 195, 105, 225, 150, 180, 240, 85, 86, 89, 90, 102, 105, 106, 150, 154, 170])
 
 
-rand = d[(d["Entropy"] > 7.5) & (d["pi_deviation"] < 0.1 * np.pi)]
 # plt.semilogy(x, Serial_Correlation)
 # plt.plot(x, Serial_Correlation)
 # plt.show()
