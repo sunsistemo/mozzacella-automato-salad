@@ -38,9 +38,9 @@ def read_results(filename):
         data = json.load(f)
     variables = {"File-bytes": File_bytes, "Entropy": Entropy, "Chi-square": Chi_square, "Mean": Mean,
                  "Monte-Carlo-Pi": Monte_Carlo_Pi, "Serial-Correlation": Serial_Correlation}
-    for d in data:
+    for i in range(256):
         for k, v in variables.items():
-            v.append(data[d][k])
+            v.append(data[str(i)][k])
     results = np.array([np.array(r) for r in results]).T
     headers = ["File-bytes", "Entropy", "Chi-square", "Mean", "Monte-Carlo-Pi", "Serial-Correlation"]
     return pd.DataFrame(results, columns=headers)
@@ -53,6 +53,7 @@ for d in (two, five):
     d["mean_deviation"] = np.abs(d["Mean"] - 255 / 2)
 
 
+rand = d[(d["Entropy"] > 7.5) & (d["pi_deviation"] < 0.1 * np.pi)]
 # plt.semilogy(x, Serial_Correlation)
 # plt.plot(x, Serial_Correlation)
 # plt.show()
