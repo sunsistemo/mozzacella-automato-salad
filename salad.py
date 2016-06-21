@@ -46,16 +46,17 @@ def make_colormap(k):
     return {str(i): "\033[3%dm%d\033[0m" % (1 + i, i) for i in range(k)}
 
 def CA_print(r=1, k=2, rule_number=-1, size=150):
+    global STATE
     rule = gen_rule(r, k, rule_number)
     # print(rule)
-    state = random_state(size, k)
+    STATE = random_state(size, k)
     colormap = make_colormap(k)
     try:
         while True:
-            pstate = "".join([colormap[c] for c in state])
+            pstate = "".join([colormap[c] for c in STATE])
             print(pstate)
             sleep(.1)
-            state = step(rule, r)
+            step(rule, r)
     except KeyboardInterrupt:
         print("Rule number: %d" % rule_number)
 
@@ -110,7 +111,12 @@ def bytestream(r, k, rule_number):
     while True:
         c = randint(a, b, rule, r, num_bits)
         # print(c)
-        write(c.to_bytes(num_bytes, byteorder="little"))
+        try:
+            write(c.to_bytes(num_bytes, byteorder="little"))
+        except (BrokenPipeError, IOError):
+            sys.stderr.close()
+            sys.exit(1)
+
 
 def main():
     global STATE
@@ -139,13 +145,6 @@ def main():
         sleep(3)
         rule_number = randint(0, k**(k**(2*r + 1)))
     CA_print(r, k, rule_number)
-
-# def test():
-#     global STATE
-#     STATE = random_state(261, 2)
-#     rule = gen_rule(1,2,30)
-#     n = 10000
-#     print(sum([randint(0,10,rule) for i in range(n)])/n)
 
 if __name__ == "__main__":
     main()
