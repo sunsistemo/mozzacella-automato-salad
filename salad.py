@@ -98,15 +98,6 @@ def randintk(a, b, rule, k = 2, r = None, num_bits=None):
         rand = int("".join(map(str, bits)), 2)
     return a + rand
 
-def bitstream(r, k, rule_number):
-    rule = gen_rule(r, k, rule_number)
-    write = sys.stdout.write
-    bitstring = {1: '1', 0: '0'}   # this is 4x faster than str !!!
-
-    while True:
-        bits = [bitstring[randnit(rule, r)] for _ in range(1024)]
-        write("".join(bits))
-
 # def bytestream(r, k, rule_number):
 #     a, b = 0, 2 ** 8
 #     num_bits = len(bin(b - a)[2:]) - 1
@@ -151,14 +142,14 @@ def main():
     global STATE
     parser = OptionParser()
     parser.set_defaults(rule_number='30', num_neighbour='1', num_colors='2')
-    parser.add_option('-r', '--rule', dest='rule_number',
-                  help='Rule number to generate random number')
+    parser.add_option('-r', '--rule', dest='rule_number', 
+                help='Rule number to generate random number')
     parser.add_option('-n', '--neighbour', dest='num_neighbour',
-                  help='Radius of neighbours')
+                help='Radius of neighbours')
     parser.add_option('-c', '--color', dest='num_colors',
-                  help='Number of colors')
-    parser.add_option("-B", "--bytestream", action="store_true")
-    parser.add_option("-b", "--bitstream", action="store_true")
+                help='Number of colors')
+    parser.add_option("-B", "--bytestream", action="store_true", 
+                help='Option to output random bytes')
     (options, args) = parser.parse_args()
 
     rule_number = int(options.rule_number)
@@ -169,8 +160,6 @@ def main():
 
     if options.bytestream:
         return bytestream(r, k, rule_number)
-    elif options.bitstream:
-        return bitstream(r, k, rule_number)
 
     if rule_number < 0 or rule_number >= k**(k**(2*r + 1)):
         print("No proper rule number given for this CA setting, generating random rule...")
