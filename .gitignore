@@ -3,3 +3,4 @@ __pycache__
 .ipynb*
 *.ipynb
 node_modules
+automato.js

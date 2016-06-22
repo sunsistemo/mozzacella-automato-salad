@@ -12,11 +12,6 @@ from gmpy2 import digits
 from rule30 import random_backup
 
 
-latSize = 16
-steps = 200
-evoLat = np.zeros((latSize, steps))
-init = np.zeros(latSize)
-
 STATE = None
 
 def gen_rule(r, k, ruleNum):

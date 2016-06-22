@@ -1,0 +1,45 @@
+{
+  "name": "mozzacella-automato-salad",
+  "version": "0.0.0",
+  "description": "Generate (pseudo) random numbers from cellular automata.",
+  "scripts": {
+    "start": "webpack-dev-server",
+    "prepublish": "webpack",
+    "prestart": "webpack",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sunsistemo/mozzacella-automato-salad.git"
+  },
+  "keywords": [
+    "random",
+    "numbers",
+    "RNG",
+    "cellular automata",
+    "CA"
+  ],
+  "license": "GPL-3.0+",
+  "bugs": {
+    "url": "https://github.com/sunsistemo/mozzacella-automato-salad/issues"
+  },
+  "devDependencies": {
+    "babel-core": "^6.10.4",
+    "babel-loader": "^6.2.4",
+    "babel-plugin-transform-exponentiation-operator": "^6.8.0",
+    "babel-preset-es2015": "^6.9.0",
+    "webpack": "^1.13.1",
+    "webpack-dev-server": "^1.14.1"
+  },
+  "dependencies": {
+    "left-pad": "^1.1.0"
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ],
+    "plugins": [
+      "transform-exponentiation-operator"
+    ]
+  }
+}
