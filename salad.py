@@ -21,9 +21,10 @@ STATE = None
 
 def gen_rule(r, k, ruleNum):
     rule = {}
-    bruleNum = digits(ruleNum, k).zfill(k ** (2 * r + 1))[::-1]
-    for s in range(k ** (2 * r + 1)):
-        rule[digits(s, k).zfill(2 * r + 1)] = int(bruleNum[s])
+    hood = 2 * r + 1
+    bruleNum = digits(ruleNum, k).zfill(k ** hood)[::-1]
+    for s in range(k ** hood):
+        rule[digits(s, k).zfill(hood)] = int(bruleNum[s])
     return rule
 
 def step(rule, r):
