@@ -7,7 +7,7 @@ from math import log
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from random import random, choice
+import random
 from gmpy2 import digits
 
 from rule30 import random_backup
@@ -42,7 +42,7 @@ def step(rule, r):
 
 def random_state(n, k):
     k = "".join(map(str, range(k)))
-    return "".join([choice(k) for _ in range(n)])
+    return "".join([random.choice(k) for _ in range(n)])
 
 def make_colormap(k):
     return {str(i): "\033[3%dm%d\033[0m" % (1 + i, i) for i in range(k)}
@@ -175,7 +175,7 @@ def main():
     if rule_number < 0 or rule_number >= k**(k**(2*r + 1)):
         print("No proper rule number given for this CA setting, generating random rule...")
         sleep(3)
-        rule_number = randint(0, k**(k**(2*r + 1)))
+        rule_number = random.randint(0, k**(k**(2*r + 1)))
     CA_print(r, k, rule_number)
 
 if __name__ == "__main__":
