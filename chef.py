@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import integrate
 from scipy.stats import chisqprob
+from gmpy2 import digits
 
 
 def cook(r):
@@ -53,23 +54,40 @@ five = read_results("results-500ksamples.json")
 for d in (two, five):
     d["pi_deviation"] = np.abs(d["Monte-Carlo-Pi"] - np.pi)
     d["mean_deviation"] = np.abs(d["Mean"] - 255 / 2)
-    d["p-value"] = np.chisqprob(d["Chi-square"], 255)
+    d["p-value"] = chisqprob(d["Chi-square"], 255)
     d["rule"] = range(256)
+    d["langton"] = [sum([int(b) for b in bin(v)[2:].zfill(8)])/8 for v in d["rule"]]
 
-rand2 = two[(two["Entropy"] > 6.9) & (two["pi_deviation"] < 0.3 * np.pi)]
+randp2 = two[(two["p-value"] > 0.1) &
+             (two["p-value"] < 0.9 )]
 
-rand5 = five[(five["Entropy"] > 6.9) &
-             (five["pi_deviation"] < 0.3 * np.pi) &
-             (five["mean_deviation"] < 0.1 * 255 / 2)]
+randp5 = five[(five["p-value"] > 0.1) &
+             (five["p-value"] < 0.9 )]
+
+randchi2 = two[(two["Chi-square"] < 10**5 )]
+
+randchi5 = five[(five["Chi-square"] < 10**5 )]
+# Plot Entropy of all rules against the langton parameter
+# ax1 = plt.gca()
+# five.plot("langton", "Entropy", ax=ax1, kind="scatter", marker='o', alpha=.5, s=40)
+# randp5.plot("langton", "Entropy", ax=ax1, kind="scatter", color="r", marker='o', alpha=.5, s=40)
+
+print(set(randchi2.rule) - set(randp2.rule))
+print(set(randchi5.rule) - set(randp5.rule))
+print(set(randchi5.rule) - set(randchi2.rule))
+
+
+ax2 = plt.gca()
+randchi2.plot("langton", "Chi-square", ax=ax2, logy=True, kind="scatter", marker='o', alpha=.5, s=40)
+randp2.plot("langton", "Chi-square", ax=ax2, logy=True, kind="scatter", color="r", marker='o', alpha=.5, s=40)
+
+# plt.semilogy(x, Serial_Correlation)
+# plt.plot(x, Serial_Correlation)
+plt.show()
 
 # The 1D CA rules that are random according to the paper
 # "When are cellular automata random?" (http://stacks.iop.org/0295-5075/84/i=5/a=50005)
 rands_paper = set([15, 30, 75, 90, 60, 105, 120, 150, 210, 240, 85, 149, 101, 165, 153, 105, 169, 150, 166, 170, 15, 135, 45, 165, 195, 105, 225, 150, 180, 240, 85, 86, 89, 90, 102, 105, 106, 150, 154, 170])
-
-
-# plt.semilogy(x, Serial_Correlation)
-# plt.plot(x, Serial_Correlation)
-# plt.show()
 
 if __name__ == "__main__":
     main()
