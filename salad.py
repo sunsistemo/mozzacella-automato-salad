@@ -3,10 +3,11 @@ from optparse import OptionParser
 import sys
 
 import math
+from math import log
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from random import random, choice
+import random
 from gmpy2 import digits
 
 from rule30 import random_backup
@@ -36,7 +37,7 @@ def step(rule, r):
 
 def random_state(n, k):
     k = "".join(map(str, range(k)))
-    return "".join([choice(k) for _ in range(n)])
+    return "".join([random.choice(k) for _ in range(n)])
 
 def make_colormap(k):
     return {str(i): "\033[3%dm%d\033[0m" % (1 + i, i) for i in range(k)}
@@ -56,7 +57,7 @@ def CA_print(r=1, k=2, rule_number=-1, size=150):
     except KeyboardInterrupt:
         print("Rule number: %d" % rule_number)
 
-def randbit(rule, r):
+def randnit(rule, r):
     global STATE
     step(rule, r)
     return int(STATE[0])
@@ -88,50 +89,62 @@ def randintk(a, b, rule, k = 2, r = None, num_bits=None):
     rand = interval
     while rand >= interval:
         for i in range(num_bits):
-            bits[i] = randbit(rule, r)
+            bits[i] = randnit(rule, r)
         rand = int("".join(map(str, bits)), 2)
     return a + rand
 
-def bitstream(r, k, rule_number):
-    rule = gen_rule(r, k, rule_number)
-    write = sys.stdout.write
-    bitstring = {1: '1', 0: '0'}   # this is 4x faster than str !!!
+# def bytestream(r, k, rule_number):
+#     a, b = 0, 2 ** 8
+#     num_bits = len(bin(b - a)[2:]) - 1
+#     num_bytes = num_bits // 8
+#     assert num_bits == 8 * num_bytes
+#     rule = gen_rule(r, k, rule_number)
+#     if sys.version_info.major >= 3:
+#         write = sys.stdout.buffer.write
+#     else:
+#         write = sys.stdout.write
 
-    while True:
-        bits = [bitstring[randbit(rule, r)] for _ in range(1024)]
-        write("".join(bits))
+#     while True:
+#         try:
+#             write(bytearray([randint(a, b, rule, r, num_bits) for _ in range(2 ** 12)]))
+#         except (BrokenPipeError, IOError):
+#             sys.stderr.close()
+#             sys.exit(1)
+
+def basekint(ls, base):
+    return sum([i * base ** (len(ls) - n - 1) for n, i in enumerate(ls)])
 
 def bytestream(r, k, rule_number):
     a, b = 0, 2 ** 8
-    num_bits = len(bin(b - a)[2:]) - 1
-    num_bytes = num_bits // 8
-    assert num_bits == 8 * num_bytes
+    num_nits = math.ceil(log(b)/log(k))
+    bytes_per_nyte = (k ** num_nits) // b
     rule = gen_rule(r, k, rule_number)
-    if sys.version_info.major >= 3:
-        write = sys.stdout.buffer.write
-    else:
-        write = sys.stdout.write
-
+    write = sys.stdout.buffer.write
     while True:
         try:
-            write(bytearray([randint(a, b, rule, r, num_bits) for _ in range(2 ** 12)]))
+            randnyte = basekint([randnit(rule,r) for _ in range(num_nits)], k)
+            while randnyte > b * bytes_per_nyte:
+                randnyte = basekint([randnit(rule,r) for _ in range(num_nits)], k)
+            randbyte = randnyte % b
+            a = bytearray([randbyte])
+            # print(randbyte, a, type(a))
+            write(a)
         except (BrokenPipeError, IOError):
             sys.stderr.close()
             sys.exit(1)
-
 
 def main():
     global STATE
     parser = OptionParser()
     parser.set_defaults(rule_number='30', num_neighbour='1', num_colors='2')
-    parser.add_option('-r', '--rule', dest='rule_number',
-                  help='Rule number to generate random number')
+    parser.add_option('-r', '--rule', dest='rule_number', 
+                help='Rule number to generate random number')
     parser.add_option('-n', '--neighbour', dest='num_neighbour',
-                  help='Radius of neighbours')
+                help='Radius of neighbours')
     parser.add_option('-c', '--color', dest='num_colors',
-                  help='Number of colors')
-    parser.add_option("-B", "--bytestream", action="store_true")
-    parser.add_option("-b", "--bitstream", action="store_true")
+                help='Number of colors')
+    parser.add_option("-B", "--bytestream", action="store_true", 
+                help='Option to output random bytes')
     (options, args) = parser.parse_args()
 
     rule_number = int(options.rule_number)
@@ -142,13 +155,11 @@ def main():
 
     if options.bytestream:
         return bytestream(r, k, rule_number)
-    elif options.bitstream:
-        return bitstream(r, k, rule_number)
 
     if rule_number < 0 or rule_number >= k**(k**(2*r + 1)):
         print("No proper rule number given for this CA setting, generating random rule...")
         sleep(3)
-        rule_number = randint(0, k**(k**(2*r + 1)))
+        rule_number = random.randint(0, k**(k**(2*r + 1)))
     CA_print(r, k, rule_number)
 
 if __name__ == "__main__":
