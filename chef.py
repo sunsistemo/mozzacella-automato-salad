@@ -58,11 +58,11 @@ for d in (two, five):
     d["rule"] = range(256)
     d["langton"] = [sum([int(b) for b in bin(v)[2:].zfill(8)])/8 for v in d["rule"]]
 
-randp2 = two[(two["p-value"] > 0.1) &
-             (two["p-value"] < 0.9 )]
+randp2 = two[(two["p-value"] > 0.05) &
+             (two["p-value"] < 0.95 )]
 
-randp5 = five[(five["p-value"] > 0.1) &
-             (five["p-value"] < 0.9 )]
+randp5 = five[(five["p-value"] > 0.05) &
+             (five["p-value"] < 0.95 )]
 
 randchi2 = two[(two["Chi-square"] < 10**5 )]
 

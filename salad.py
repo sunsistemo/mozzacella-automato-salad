@@ -3,6 +3,7 @@ from optparse import OptionParser
 import sys
 
 import math
+from math import log
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -61,7 +62,7 @@ def CA_print(r=1, k=2, rule_number=-1, size=150):
     except KeyboardInterrupt:
         print("Rule number: %d" % rule_number)
 
-def randbit(rule, r):
+def randnit(rule, r):
     global STATE
     step(rule, r)
     return int(STATE[0])
@@ -93,7 +94,7 @@ def randintk(a, b, rule, k = 2, r = None, num_bits=None):
     rand = interval
     while rand >= interval:
         for i in range(num_bits):
-            bits[i] = randbit(rule, r)
+            bits[i] = randnit(rule, r)
         rand = int("".join(map(str, bits)), 2)
     return a + rand
 
@@ -103,27 +104,48 @@ def bitstream(r, k, rule_number):
     bitstring = {1: '1', 0: '0'}   # this is 4x faster than str !!!
 
     while True:
-        bits = [bitstring[randbit(rule, r)] for _ in range(1024)]
+        bits = [bitstring[randnit(rule, r)] for _ in range(1024)]
         write("".join(bits))
+
+# def bytestream(r, k, rule_number):
+#     a, b = 0, 2 ** 8
+#     num_bits = len(bin(b - a)[2:]) - 1
+#     num_bytes = num_bits // 8
+#     assert num_bits == 8 * num_bytes
+#     rule = gen_rule(r, k, rule_number)
+#     if sys.version_info.major >= 3:
+#         write = sys.stdout.buffer.write
+#     else:
+#         write = sys.stdout.write
+
+#     while True:
+#         try:
+#             write(bytearray([randint(a, b, rule, r, num_bits) for _ in range(2 ** 12)]))
+#         except (BrokenPipeError, IOError):
+#             sys.stderr.close()
+#             sys.exit(1)
+
+def basekint(ls, base):
+    return sum([i * base ** (len(ls) - n - 1) for n, i in enumerate(ls)])
 
 def bytestream(r, k, rule_number):
     a, b = 0, 2 ** 8
-    num_bits = len(bin(b - a)[2:]) - 1
-    num_bytes = num_bits // 8
-    assert num_bits == 8 * num_bytes
+    num_nits = math.ceil(log(b)/log(k))
+    bytes_per_nyte = (k ** num_nits) // b
     rule = gen_rule(r, k, rule_number)
-    if sys.version_info.major >= 3:
-        write = sys.stdout.buffer.write
-    else:
-        write = sys.stdout.write
-
+    write = sys.stdout.buffer.write
     while True:
         try:
-            write(bytearray([randint(a, b, rule, r, num_bits) for _ in range(2 ** 12)]))
+            randnyte = basekint([randnit(rule,r) for _ in range(num_nits)], k)
+            while randnyte > b * bytes_per_nyte:
+                randnyte = basekint([randnit(rule,r) for _ in range(num_nits)], k)
+            randbyte = randnyte % b
+            a = bytearray([randbyte])
+            # print(randbyte, a, type(a))
+            write(a)
         except (BrokenPipeError, IOError):
             sys.stderr.close()
             sys.exit(1)
-
 
 def main():
     global STATE
