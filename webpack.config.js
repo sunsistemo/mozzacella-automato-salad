@@ -4,7 +4,11 @@ module.exports = {
     },
     output: {
         path: __dirname,
-        filename: "[name].js"
+        filename: "[name].js",
+
+        // export itself to a global var named "CA"
+        libraryTarget: "var",
+        library: "CA"
     },
     module: {
         loaders: [
