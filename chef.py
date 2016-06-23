@@ -3,6 +3,7 @@ import subprocess
 from functools import partial
 import random
 import sys
+from time import time
 
 import json
 from optparse import OptionParser
@@ -53,7 +54,7 @@ def main():
     output = p.map(func, rules)
     for i, d in enumerate(output):
         data[i] = d
-    with open("results.json", "w") as f:
+    with open("results_%d.json" % time(), "w") as f:
         json.dump(data, f)
 
 if __name__ == "__main__":
