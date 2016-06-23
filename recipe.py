@@ -19,8 +19,8 @@ def read_results(filename):
     headers = ["File-bytes", "Entropy", "Chi-square",  "Mean", "Monte-Carlo-Pi", "Serial-Correlation"]
     return pd.DataFrame(results, columns=headers)
 
-two = read_results("results-200ksamples.json")
-five = read_results("results-500ksamples.json")
+two = read_results("results/results-200ksamples.json")
+five = read_results("results/results-500ksamples.json")
 
 for d in (two, five):
     d["pi_deviation"] = np.abs(d["Monte-Carlo-Pi"] - np.pi)

@@ -34,7 +34,12 @@
       </h2>
       <hr>
       <h3>Why?</h3>
-      <p>Random numbers are an essential ingredient of all computer programs involving probabilities. They are used in stochastic simulations like the Monte-Carlo method, to implement randomized algorithms and even in cryptography to provide secure communication online with for example your bank. Dysfunctioning random-number generators (RNG) lead to spurious results: they can invalidate the statistics of your experiment by introducing a bias, or destroy the security guarantees of cryptography. It is thus of utmost importance that the random numbers in use <em>are</em> actually random.</p>
+      <p>Random numbers are an essential ingredient of all computer programs involving probabilities. They are used in stochastic simulations like the Monte-Carlo method, to implement randomized algorithms and even in cryptography to provide secure communication online with for example your bank. The most generic way to generate random numbers is by measuring a truly random physical process like radioactive decay or thermal noise. However since most of the time we can not depend on such sources and in case of cryptography we may want to reproduce the same random number. For these reasons and due to their speed of generating random numbers  we want to resort to a pseudo random-number generators (PRNG). However to find an algorithm that will produce a set of numbers with random properties is not trivial. Dysfunctioning PRNG lead to spurious results: they can invalidate the statistics of your experiment by introducing a bias, or destroy the security guarantees of cryptography because they are easily predictable. It is thus of utmost importance that the random numbers in use <em>are</em> actually random. Cellular Automata (CA) have been used as random number generators and the full rule space of the elementary CA's has been explored, however we think we can improve on these results and we explore the rulespace of other CA's as well.</p>
+
+      <h3>Cellular Automata</h3>
+      <p>A Cellular Automaton is a discrete model where each cell can be in one of \(k\) states and evolves according to a fixed rule that evaluate all cells and their \(n\) closest neighbours. CA's can be defined in an arbitrary number of dimensions \(d\). A CA rule consists of \(k^{2 d r + 1}\) sub-rules of length \(2 d r + 1\). Since for each sub-rule we have \(k\) possible out states, the number of rules of a CA can be computed with $$ n_{rules} = k^{k^{2 d r + 1}}$$ </p>
+
+      <p>Stephen Wolfram developed a naming system for CA rules where the sub-rules were sorted according to the base \(k\) representation of their instates and the decimal representation of the base \(k\) number that is formed by the sorted out-states gives the rule name. Below you can find a visualization of a one dimensional CA where we can choose the number of states, the number of neighbours and the rule number. </p>
 
       <div class="row">
         <div class="col-md-10 text-center">
@@ -48,11 +53,29 @@
         </div>
       </div>
 
+      <p>Wolfram also conducted a systematic study on a specific kind of one dimensional Cellular Automata with radius \(r = 1\) and number of states \(k = 2\), called the elementary CA. By noting how some rules end up in a loop of a finite amount of states or in one single state and others show chaotic or complex behaviour, he classified the rules into four classes according to their behaviour.</p>
+
+      <h3>Random numbers from CA's</h3>
+      <p> The existence of Wolfram class 3 and 4 (respectively chaotic and complex) indicate that we can use Cellular Automata for the generation of random numbers. It is easy to generate a bit from a CA with \(k = 2\) evolution we can Wolfram propagated that for the elementary CA's, rule 30 is a proper random number generator and later research by Coe, Ahnert and Fink [2] who searched through all elementary CA rules and formed a list of random generator rules.
+      </p>
+
+      <h3>Randomness tests</h3>
+      <p>
+        Mean (deviation)
+        Monte-Carlo Pi (deviation)
+        Entropy
+        Chi-square (p-value)
+      </p>
+
+      <h3>Results</h3>
+
+
       <h3>Conclusion </h3>
-      Rule 30 is still ok.
+
 
       <h3>References</h3>
-      We used many references!
+      [1]
+      [2] When are cellular automata random?,
 
       <footer>
         <div class="row">
