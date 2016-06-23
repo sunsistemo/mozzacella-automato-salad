@@ -2,11 +2,11 @@
 
 var menuTimeout;
 
-capDiv = d3.select("body").select("#capdiv")
-capSvg = capDiv.selectAll(".capSvg")
-capHeight = 200
-capWidth = 400
-capPadding = 20
+var capDiv = d3.select("body").select("#capdiv")
+var capSvg = capDiv.selectAll(".capSvg")
+var capHeight = 200
+var capWidth = 400
+var capPadding = 20
 
 function build(svg){
     // Initiate the axis containers first, so they will be at the lowest
