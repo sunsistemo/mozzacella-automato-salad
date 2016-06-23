@@ -116,15 +116,20 @@ def basekint(ls, base):
 
 def bytestream(r, k, rule_number):
     a, b = 0, 2 ** 8
-    num_nits = math.ceil(log(b)/log(k))
+    num_nits = math.ceil(log(b) / log(k))
     bytes_per_nyte = (k ** num_nits) // b
     rule = gen_rule(r, k, rule_number)
     write = sys.stdout.buffer.write
     while True:
         try:
-            randnyte = basekint([randnit(rule,r) for _ in range(num_nits)], k)
+            randnyte = float("inf")
+            tries = 0
             while randnyte > b * bytes_per_nyte:
-                randnyte = basekint([randnit(rule,r) for _ in range(num_nits)], k)
+                print(randnyte)
+                randnyte = basekint([randnit(rule, r) for _ in range(num_nits)], k)
+                tries += 1
+                if tries > 11:
+                    raise StableError
             randbyte = randnyte % b
             a = bytearray([randbyte])
             # print(randbyte, a, type(a))
@@ -161,6 +166,9 @@ def main():
         sleep(3)
         rule_number = random.randint(0, k**(k**(2*r + 1)))
     CA_print(r, k, rule_number)
+
+class StableError(Exception):
+    pass
 
 if __name__ == "__main__":
     main()
