@@ -2,6 +2,7 @@ import multiprocessing
 import subprocess
 from functools import partial
 import random
+import os
 import sys
 from time import time
 
@@ -10,7 +11,7 @@ from optparse import OptionParser
 
 
 def cook(num_bytes, num_colors, rule):
-    command = "python3 salad.py --bytestream -r %d -c %d | pv -s %d | ent -t" % (rule, num_colors, num_bytes)
+    command = "python3 salad.py --bytestream -r %d -c %d | pv -S -s %d | ent -t" % (rule, num_colors, num_bytes)
     try:
         output = subprocess.check_output(command, shell=True)
     except (BrokenPipeError, IOError):
@@ -38,17 +39,15 @@ def main():
     num_bytes = int(options.num_bytes)
 
     sample_size = int(options.sample_size)
-    max_rule = (k**(k**3))-1
+    max_rule = (k ** (k ** 3)) - 1
     print("maxrule: %d" % max_rule)
     sample_rules = [random.randint(0, max_rule) for x in range(sample_size)]
-    #print(sample_rules[x if x>max_rule for x in sample_rules])
     print(sample_rules)
-    #sys.exit()
     rands = [161, 225, 195, 101, 102, 135, 165, 105, 106, 75, 169, 45, 149, 86, 150, 120, 153, 90, 122, 60, 30]
     rands_paper = list(set([15, 30, 75, 90, 60, 105, 120, 150, 210, 240, 85, 149, 101, 165, 153, 105, 169, 150, 166, 170, 15, 135, 45, 165, 195, 105, 225, 150, 180, 240, 85, 86, 89, 90, 102, 105, 106, 150, 154, 170]))
 
     data = {}
-    p = multiprocessing.Pool(2)
+    p = multiprocessing.Pool(os.cpu_count() // 2)
     rules = sample_rules
     func = partial(cook, num_bytes, k)
     output = p.map(func, rules)
