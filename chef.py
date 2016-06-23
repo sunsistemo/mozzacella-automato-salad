@@ -8,17 +8,15 @@ import sys
 import json
 from optparse import OptionParser
 
-from salad import StableError
-
 
 def cook(num_bytes, num_colors, rule):
     command = "python3 salad.py --bytestream -r %d -c %d | pv -S -s %d | ent -t" % (rule, num_colors, num_bytes)
     try:
         output = subprocess.check_output(command, shell=True)
-    except StableError:
-        return None
-    except (CalledProcessError, BrokenPipeError, IOError):
+    except (BrokenPipeError, IOError):
         pass
+    except CalledProcessError:
+        return None
     output = output.decode("utf-8")
     output = output.split('\n')[:-1]
     headers, values = [d.split(',')[1:] for d in output]
