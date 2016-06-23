@@ -40,7 +40,7 @@
       <p>A Cellular Automaton is a discrete model where each cell can be in one of \(k\) states and evolves according to a fixed rule that evaluate all cells and their \(n\) closest neighbours. CA's can be defined in an arbitrary number of dimensions \(d\). A CA rule consists of \(k^{2 d r + 1}\) sub-rules of length \(2 d r + 1\). Since for each sub-rule we have \(k\) possible out states, the number of rules of a CA can be computed with $$ n_{rules} = k^{k^{2 d r + 1}}$$ </p>
 
       <p>Stephen Wolfram developed a naming system for CA rules where the sub-rules were sorted according to the base \(k\) representation of their instates and the decimal representation of the base \(k\) number that is formed by the sorted out-states gives the rule name. Below you can find a visualization of a one dimensional CA where we can choose the number of states, the number of neighbours and the rule number. </p>
-
+      <br>
       <div class="row">
         <div class="col-md-10 text-center">
           <canvas id="1D_CA" width="900" height="500">1D Cellular Automata</canvas>
@@ -52,7 +52,7 @@
           <button type="button" class="btn btn-success" onclick="CA.start_1D_CA()">Restart</button>
         </div>
       </div>
-
+      <br>
       <p>Wolfram also conducted a systematic study on a specific kind of one dimensional Cellular Automata with radius \(r = 1\) and number of states \(k = 2\), called the elementary CA. By noting how some rules end up in a loop of a finite amount of states or in one single state and others show chaotic or complex behaviour, he classified the rules into four classes according to their behaviour.</p>
 
       <h3>Random numbers from CA's</h3>
@@ -61,7 +61,9 @@
 
       <h3>Randomness tests</h3>
       <p>
+        Randomness can be defined in various ways. One definition does not necessarily mean the other an
         Mean (deviation)
+
         Monte-Carlo Pi (deviation)
         Entropy
         Chi-square (p-value)
