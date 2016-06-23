@@ -93,24 +93,6 @@ def randintk(a, b, rule, k = 2, r = None, num_bits=None):
         rand = int("".join(map(str, bits)), 2)
     return a + rand
 
-# def bytestream(r, k, rule_number):
-#     a, b = 0, 2 ** 8
-#     num_bits = len(bin(b - a)[2:]) - 1
-#     num_bytes = num_bits // 8
-#     assert num_bits == 8 * num_bytes
-#     rule = gen_rule(r, k, rule_number)
-#     if sys.version_info.major >= 3:
-#         write = sys.stdout.buffer.write
-#     else:
-#         write = sys.stdout.write
-
-#     while True:
-#         try:
-#             write(bytearray([randint(a, b, rule, r, num_bits) for _ in range(2 ** 12)]))
-#         except (BrokenPipeError, IOError):
-#             sys.stderr.close()
-#             sys.exit(1)
-
 def basekint(ls, base):
     return sum([i * base ** (len(ls) - n - 1) for n, i in enumerate(ls)])
 
@@ -125,14 +107,12 @@ def bytestream(r, k, rule_number):
             randnyte = float("inf")
             tries = 0
             while randnyte > b * bytes_per_nyte:
-                print(randnyte)
                 randnyte = basekint([randnit(rule, r) for _ in range(num_nits)], k)
                 tries += 1
                 if tries > 11:
                     raise StableError
             randbyte = randnyte % b
             a = bytearray([randbyte])
-            # print(randbyte, a, type(a))
             write(a)
         except (BrokenPipeError, IOError):
             sys.stderr.close()

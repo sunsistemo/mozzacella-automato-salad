@@ -1,6 +1,5 @@
 import multiprocessing
 import subprocess
-from subprocess import CalledProcessError
 from functools import partial
 import random
 import sys
@@ -15,8 +14,6 @@ def cook(num_bytes, num_colors, rule):
         output = subprocess.check_output(command, shell=True)
     except (BrokenPipeError, IOError):
         pass
-    except CalledProcessError:
-        return None
     output = output.decode("utf-8")
     output = output.split('\n')[:-1]
     headers, values = [d.split(',')[1:] for d in output]
@@ -54,13 +51,8 @@ def main():
     rules = sample_rules
     func = partial(cook, num_bytes, k)
     output = p.map(func, rules)
-    stable = 0                  # number of stable states found
     for i, d in enumerate(output):
-        if d is not None:
-            data[i] = d
-        else:
-            stable += 1
-    data["stable_states"] = stable
+        data[i] = d
     with open("results.json", "w") as f:
         json.dump(data, f)
 
