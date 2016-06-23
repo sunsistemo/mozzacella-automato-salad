@@ -1,6 +1,6 @@
 import multiprocessing
-from multiprocessing import CalledProcessError
 import subprocess
+from subprocess import CalledProcessError
 from functools import partial
 import random
 import sys
