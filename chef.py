@@ -10,7 +10,7 @@ from optparse import OptionParser
 
 
 def cook(num_bytes, num_colors, rule):
-    command = "python3 salad.py --bytestream -r %d -c %d | pv -S -s %d | ent -t" % (rule, num_colors, num_bytes)
+    command = "python3 salad.py --bytestream -r %d -c %d | pv -s %d | ent -t" % (rule, num_colors, num_bytes)
     try:
         output = subprocess.check_output(command, shell=True)
     except (BrokenPipeError, IOError):
@@ -48,7 +48,7 @@ def main():
     rands_paper = list(set([15, 30, 75, 90, 60, 105, 120, 150, 210, 240, 85, 149, 101, 165, 153, 105, 169, 150, 166, 170, 15, 135, 45, 165, 195, 105, 225, 150, 180, 240, 85, 86, 89, 90, 102, 105, 106, 150, 154, 170]))
 
     data = {}
-    p = multiprocessing.Pool(4)
+    p = multiprocessing.Pool(2)
     rules = sample_rules
     func = partial(cook, num_bytes, k)
     output = p.map(func, rules)
