@@ -68,20 +68,112 @@
       <p>Wolfram also conducted a systematic study on a specific kind of one dimensional Cellular Automata with radius \(r = 1\) and number of states \(k = 2\), called the elementary CA. By noting how some rules end up in a loop of a finite amount of states or in one single state and others show chaotic or complex behaviour, he classified the rules into four classes according to their behaviour.</p>
 
       <h3>Random numbers from CA's</h3>
-      <p> The existence of Wolfram class 3 and 4 (respectively chaotic and complex) indicate that we can use Cellular Automata for the generation of random numbers. It is easy to generate a bit from a CA with \(k = 2\), we can select one cell, using the new state it generates each time step as a new bit. There are of course other methods to however the previously mentioned is easy and fast.  Wolfram propagated that for the elementary CA's, rule 30 is a proper random number generator and later research by Coe, Ahnert and Fink [2] who searched through all elementary CA rules and formed a list of random generator rules.
+      <p> The existence of Wolfram class 3 and 4 (respectively chaotic and complex) indicate that we can use Cellular Automata for the generation of random numbers. When we want to generate a random number with a CA we want to use the It is easy to generate a bit from a CA with \(k = 2\), we can select one cell, using the new state it generates each time step as a new bit. When we want to choose a random integer in a given range we need to make sure that we take enough bits. However we also need to take care that we keep our sample space homogeneous when mapping the found states to an integer.  </p>
+      <p class="example">In the case of \(k = 3\) we generate trits and if we want to find for example an integer between 0 and 9 it fits exactly in two trits. However an interval of size 10 does not and we would have to sample three trits. As we now have 27 possible values we need to decide what to do with all values above 10. We could take the found ternary number modulo 10 (the interval), however this would mean that the numbers 0 to 6 are over represented. We could also just throw away every number above 10 and try to generate another number. In this case we would throw away almost two third of the found numbers which is very wasteful.  </p>
+
+        <p>There are of course other (more advanced) methods to generate numbers from the CA states however the previously mentioned is in most cases easy and fast. Wolfram propagated that for the elementary CA's, rule 30 is a proper random number generator and later research by Coe, Ahnert and Fink [2] who searched through all elementary CA rules confirmed this and they formed a list of random generator elementary CA rules.
       </p>
 
       <h3>Randomness tests</h3>
       <p>
-        Randomness can be defined in various ways. One definition does not necessarily imply the other as well and several kinds of randomness can be used for different purposes. For example when we do a Monte-Carlo simulation we want the random numbers to be evenly spaced over the domain, however true random numbers often show large gaps. On the other hand for cryptography we need random numbers
-        Mean (deviation)
+        Randomness can be defined in various ways. One definition does not necessarily imply the other as well and several kinds of randomness can be used for different purposes. For example when we do a Monte-Carlo simulation we want the random numbers to be evenly spaced over the domain, however true random numbers often show large gaps. On the other hand for cryptography we need random numbers for which the algorithm is not easily derived but which can be reproduced if we know the algorithm and the seed.</p>
 
-        Monte-Carlo Pi (deviation)
-        Entropy
-        Chi-square (p-value)
-      </p>
+      <h4>Mean</h4>
+      <p>A first easy measure for randomness is the mean bit. A random number should have a mean bit value of \(.5\) since we want equal chance for a 0 or 1 state.  If it deviates from \(.5\) we have consistently more of one of the states.  </p>
+      <figure>
+        <img src="plots/mean-langton.svg" alt="Mean against the Langton parameter" width="500">
+       </figure>
 
-      <h3>Results</h3>
+      <h4>Monte-Carlo Pi</h4>
+      <p></p>
+
+      <h4>Entropy</h4>
+      <p></p>
+      <figure>
+       <img src="plots/entropy-langton.svg" alt="Entropy against the Langton parameter" width="500">
+      </figure>
+
+      <h4>Chi-square (p-value)</h4>
+      <p></p>
+      <figure>
+        <img src="plots/chisquare-langton.svg" alt="Chi Square against the Langton parameter" width="500">
+      </figure>
+
+      <h3>What came out?</h3>
+      <div>
+        <table class="dataframe" border="1">
+          <thead>
+            <tr style="text-align: right;">
+              <th></th>
+              <th>pi_deviation</th>
+              <th>mean_deviation</th>
+              <th>p_value_deviation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>195</th>
+              <td>0.001276</td>
+              <td>0.082446</td>
+              <td>0.013847</td>
+            </tr>
+            <tr>
+              <th>86</th>
+              <td>0.008420</td>
+              <td>0.109408</td>
+              <td>0.045251</td>
+            </tr>
+            <tr>
+              <th>149</th>
+              <td>0.010588</td>
+              <td>0.205130</td>
+              <td>0.052170</td>
+            </tr>
+            <tr>
+              <th>225</th>
+              <td>0.000460</td>
+              <td>0.028304</td>
+              <td>0.054775</td>
+            </tr>
+            <tr>
+              <th>150</th>
+              <td>0.009388</td>
+              <td>0.132046</td>
+              <td>0.073749</td>
+            </tr>
+            <tr>
+              <th>135</th>
+              <td>0.017645</td>
+              <td>0.111598</td>
+              <td>0.165868</td>
+            </tr>
+            <tr>
+              <th>60</th>
+              <td>0.003140</td>
+              <td>0.049358</td>
+              <td>0.215533</td>
+            </tr>
+            <tr>
+              <th>75</th>
+              <td>0.004052</td>
+              <td>0.026974</td>
+              <td>0.224544</td>
+            </tr>
+            <tr>
+              <th>122</th>
+              <td>0.004828</td>
+              <td>0.114394</td>
+              <td>0.227844</td>
+            </tr>
+            <tr>
+              <th>30</th>
+              <td>0.007324</td>
+              <td>0.009032</td>
+              <td>0.270481</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
 
       <h3>Conclusion </h3>

@@ -11,3 +11,10 @@ footer {
     color: #777;
     font-size: 14px;
 }
+
+p.example {
+    margin: 40px;
+    padding: 10px;
+    font-style: italic;
+    background-color: rgb(230,230,255);
+}
