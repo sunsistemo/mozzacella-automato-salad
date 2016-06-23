@@ -9,9 +9,12 @@ from time import time
 import json
 from optparse import OptionParser
 
+from compare import python_random
 
-def cook(num_bytes, num_colors, rule):
-    command = "python3 salad.py --bytestream -r %d -c %d | pv -S -s %d | ent -t" % (rule, num_colors, num_bytes)
+
+def cook(num_bytes, num_colors, rule, command=None):
+    if command is None:
+        command = "python3 salad.py --bytestream -r %d -c %d | pv -S -s %d | ent -t" % (rule, num_colors, num_bytes)
     try:
         output = subprocess.check_output(command, shell=True)
     except (BrokenPipeError, IOError):
@@ -33,10 +36,23 @@ def main():
                 help='Number of colors')
     parser.add_option('-s', '--sample-size', dest='sample_size',
                 help='Number of rules to sample')
+    parser.add_option('-p', '--python', dest='python', action="store_true",
+                      help="Test Python's RNG.")
+    parser.add_option('-u', '--urandom', dest='urandom', action="store_true",
+                      help="Test the linux /dev/urandom RNG.")
     (options, args) = parser.parse_args()
 
     k = int(options.num_colors)
     num_bytes = int(options.num_bytes)
+
+    if options.python:
+        command = "python3 compare.py | pv -S -s %d | ent -t" % num_bytes
+        data = cook(0, 0, 0, command=command)
+        return write_data(data, "python_%d.json" % time())
+    elif options.urandom:
+        command = "cat /dev/urandom | pv -S -s %d | ent -t" % num_bytes
+        data = cook(0, 0, 0, command=command)
+        return write_data(data, "urandom_%d.json" % time())
 
     sample_size = int(options.sample_size)
     max_rule = (k ** (k ** 3)) - 1
@@ -53,8 +69,13 @@ def main():
     output = p.map(func, rules)
     for i, d in enumerate(output):
         data[i] = d
-    with open("results_%d.json" % time(), "w") as f:
+    write_data(data, "results_%d.json" % time())
+
+
+def write_data(data, filename):
+    with open(filename, "w") as f:
         json.dump(data, f)
+
 
 if __name__ == "__main__":
     main()
