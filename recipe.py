@@ -29,32 +29,33 @@ for d in (two, five):
     d["rule"] = range(256)
     d["langton"] = [sum([int(b) for b in bin(v)[2:].zfill(8)])/8 for v in d["rule"]]
 
-randp2 = two[(two["p-value"] > 0.05) &
-             (two["p-value"] < 0.95 )]
+def result_play():
+    randp2 = two[(two["p-value"] > 0.05) &
+                 (two["p-value"] < 0.95 )]
 
-randp5 = five[(five["p-value"] > 0.05) &
-             (five["p-value"] < 0.95 )]
+    randp5 = five[(five["p-value"] > 0.05) &
+                 (five["p-value"] < 0.95 )]
 
-randchi2 = two[(two["Chi-square"] < 10**5 )]
+    randchi2 = two[(two["Chi-square"] < 10**5 )]
 
-randchi5 = five[(five["Chi-square"] < 10**5 )]
-# Plot Entropy of all rules against the langton parameter
-# ax1 = plt.gca()
-# five.plot("langton", "Entropy", ax=ax1, kind="scatter", marker='o', alpha=.5, s=40)
-# randp5.plot("langton", "Entropy", ax=ax1, kind="scatter", color="r", marker='o', alpha=.5, s=40)
+    randchi5 = five[(five["Chi-square"] < 10**5 )]
+    # Plot Entropy of all rules against the langton parameter
+    # ax1 = plt.gca()
+    # five.plot("langton", "Entropy", ax=ax1, kind="scatter", marker='o', alpha=.5, s=40)
+    # randp5.plot("langton", "Entropy", ax=ax1, kind="scatter", color="r", marker='o', alpha=.5, s=40)
 
-print(set(randchi2.rule) - set(randp2.rule))
-print(set(randchi5.rule) - set(randp5.rule))
-print(set(randchi5.rule) - set(randchi2.rule))
+    print(set(randchi2.rule) - set(randp2.rule))
+    print(set(randchi5.rule) - set(randp5.rule))
+    print(set(randchi5.rule) - set(randchi2.rule))
 
 
-ax2 = plt.gca()
-randchi2.plot("langton", "Chi-square", ax=ax2, logy=True, kind="scatter", marker='o', alpha=.5, s=40)
-randp2.plot("langton", "Chi-square", ax=ax2, logy=True, kind="scatter", color="r", marker='o', alpha=.5, s=40)
+    ax2 = plt.gca()
+    randchi2.plot("langton", "Chi-square", ax=ax2, logy=True, kind="scatter", marker='o', alpha=.5, s=40)
+    randp2.plot("langton", "Chi-square", ax=ax2, logy=True, kind="scatter", color="r", marker='o', alpha=.5, s=40)
 
-#plt.semilogy(x, Serial_Correlation)
-#plt.plot(x, Serial_Correlation)
-plt.show()
+    #plt.semilogy(x, Serial_Correlation)
+    #plt.plot(x, Serial_Correlation)
+    plt.show()
 
 # The 1D CA rules that are random according to the paper
 # "When are cellular automata random?" (http://stacks.iop.org/0295-5075/84/i=5/a=50005)
