@@ -34,7 +34,7 @@
       </h2>
       <hr>
       <h3>Why care about Random Numbers?</h3>
-      <p>Random numbers are an essential ingredient of all computer programs involving probabilities. They are used in stochastic simulations like the Monte-Carlo method, to implement randomized algorithms and even in cryptography to provide secure communication online with for example your bank. The most generic way to generate random numbers is by measuring a truly random physical process like radioactive decay or thermal noise. We cannot however always depend on such sources of randomness, and sometimes you want to be able to reproduce your sequence of random numbers. For these reasons and due to their speed of generating random numbers we will look at pseudo random-number generators (PRNG). PRNGs are not completely random like physical RNGs: someone with a computer that can run exponential time algorithms can distinguish between a stream of random numbers generated from a PRNG and a RNG. Because such computers do not exist (yet?), good PRNGs are indistinguishable from real RNGs. It is however not easy to construct a good PRNG. Not only will it need a truly random seed to start, it is also not trivial to find an algorithm that can derive a sequence of random numbers from it. Dysfunctioning PRNGs lead to spurious results: they can invalidate the statistics of your experiment by introducing a bias, or destroy the security guarantees of cryptography because they are easily predictable. It is thus of utmost importance that the random numbers in use <em>are</em> actually random. Cellular Automata (CA) have been used as random number generators and the full rule space of the elementary CA's has been explored, however we think we can improve on these results and we explore the rulespace of other CA's as well.</p>
+      <p>Random numbers are an essential ingredient of all computer programs involving probabilities. They are used in stochastic simulations like the Monte-Carlo method, to implement randomized algorithms and even in cryptography to provide secure communication online with for example your bank. The most generic way to generate random numbers is by measuring a truly random physical process like radioactive decay or thermal noise. We cannot however always depend on such sources of randomness, and sometimes you want to be able to reproduce your sequence of random numbers. For these reasons and due to their speed of generating random numbers we will look at pseudo random-number generators (PRNG). PRNGs are not completely random like physical RNGs: someone with a computer that can run exponential time algorithms can distinguish between a stream of random numbers generated from a PRNG and a RNG. Because such computers do not exist (yet?), good PRNGs are indistinguishable from real RNGs. It is however not easy to construct a good PRNG. Not only will it need a truly random seed to start, it is also not trivial to find an algorithm that can derive a sequence of random numbers from it. Dysfunctioning PRNGs lead to spurious results: they can invalidate the statistics of your experiment by introducing a bias, or destroy the security guarantees of cryptography because they are easily predictable. It is thus of utmost importance that the random numbers in use <em>are</em> actually random. Cellular Automata (CA) have been used as random number generators and the full rule space of the elementary CA's has been explored, however we think we can improve on these results and we explore the rulespace of other than elementary CA's as well.</p>
 
       <h3>Cellular Automata</h3>
       <p>A Cellular Automaton is a discrete model where each cell can be in one of \(k\) states and evolves according to a fixed rule that evaluates all cells and their \(r\) closest neighbours. CA's can be defined in an arbitrary number of dimensions \(d\). A CA rule consists of \(k^{2 d r + 1}\) sub-rules of length \(2 d r + 1\). Since for each sub-rule we have \(k\) possible out states, the number of rules of a CA can be computed with $$ n_{rules} = k^{k^{2 d r + 1}}$$ </p>
@@ -61,35 +61,182 @@
             <input id="input_random" type="checkbox" value="">
             Random Rule
           </label>
-          <button type="button" class="btn btn-success" onclick="CA.start_1D_CA()">Restart</button>
+          <button type="button" class="btn btn-success" onclick="CA.start_1D_CA()">Start</button>
         </div>
       </div>
       <br>
 
       <p>Wolfram also conducted a systematic study on a specific kind of one dimensional Cellular Automata with radius \(r = 1\) and number of states \(k = 2\), called the elementary CA. By noting how some rules end up in a loop of a finite amount of states or in one single state and others show chaotic or complex behaviour, he classified the rules into four classes according to their behaviour.</p>
 
+      <h3>Hypothesis</h3>
+      <p>The hypothesis stated for this project is the following: "Is it easier to use less elementary CAs for random number generation?". A supporting reason for this hypothesis is that we expect to get more chaos out of our CAs when we introduce more degrees of freedom.</p>
+
       <h3>Random numbers from CA's</h3>
-      <p> The existence of Wolfram class 3 and 4 (respectively chaotic and complex) indicate that we can use Cellular Automata for the generation of random numbers. It is easy to generate a bit from a CA with \(k = 2\) evolution we can Wolfram propagated that for the elementary CA's, rule 30 is a proper random number generator and later research by Coe, Ahnert and Fink [2] who searched through all elementary CA rules and formed a list of random generator rules.
-      </p>
+      <p> The existence of Wolfram class 3 and 4 (respectively chaotic and complex) indicate that we can use Cellular Automata for the generation of random numbers. When we want to generate a random number with a CA we want to use the It is easy to generate a bit from a CA with \(k = 2\), we can select one cell, using the new state it generates each time step as a new bit. When we want to choose a random integer in a given range we need to make sure that we take enough bits. However we also need to take care that we keep our sample space homogeneous when mapping the found states to an integer.  </p>
+
+      <p class="example">In the case of \(k = 3\) we generate trits and if we want to find for example an integer between 0 and 9 it fits exactly in two trits. However an interval of size 10 does not and we would have to sample three trits. As we now have 27 possible values we need to decide what to do with all values above 10. We could take the found ternary number modulo 10 (the interval), however this would mean that the numbers 0 to 6 are over represented. We could also just throw away every number above 10 and try to generate another number. In this case we would throw away almost two third of the found numbers which is very wasteful.  </p>
+
+        <p>There are of course other (more advanced) methods to generate numbers from the CA states however the previously mentioned is in most cases easy and fast. Wolfram propagated that for the elementary CA's, rule 30 is a proper random number generator and later research by Coe, Ahnert and Fink [2] who searched through all elementary CA rules confirmed this and they formed a list of random generator elementary CA rules.
+        </p>
+
+        <p>For testing our random numbers we needed a byte stream so we had to convert our series of bits, trits or units of other bases to bytes and did this by gathering enough states to fill a byte (8 bits, 5 trits, etc.) and then get the modulo 256 of the found base k number. If the number however was greater than n times 256, with n the number of bytes that fully fitted inside our base k number, it was discarded and a new number was generated. There are of course other (more advanced) methods to generate numbers from the CA states however the previously mentioned is in most cases easy and fast. Wolfram propagated that for the elementary CA's, rule 30 is a proper random number generator and later research by Coe, Ahnert and Fink [2] who searched through all elementary CA rules confirmed this and they formed a list of random generator elementary CA rules.
+        </p>
+
+        <br>
+        <div class="text-center">
+          <canvas id="CA_bits" width="800" height="300">Rule 30 Generating Bits</canvas>
+          <button type="button" class="btn btn-success" onclick="CA.start_bits()">Start</button>
+        </div>
+
+        <div class="row">
+          <div class="col-md-2">
+            <span class="mono" id="span_bits"></span>
+          </div>
+
+          <div class="col-md-8">
+            <span class="mono-small" id="span_nums"></span>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-2">
+            Bytes: <span id="bytes"></span>
+          </div>
+          <div class="col-md-3">
+            Mean: <span id="mean"></span>
+          </div>
+        </div>
+        <br>
 
       <h3>Randomness tests</h3>
       <p>
-        Mean (deviation)
-        Monte-Carlo Pi (deviation)
-        Entropy
-        Chi-square (p-value)
-      </p>
+        Randomness can be defined in various ways. One definition does not necessarily imply the other as well and several kinds of randomness can be used for different purposes. For example when we do a Monte-Carlo simulation we want the random numbers to be evenly spaced over the domain, however true random numbers often show large gaps. On the other hand for cryptography we need random numbers for which the algorithm is not easily derived but which can be reproduced if we know the algorithm and the seed. We used various measures all bundled in the program Ent. Ent took as input a byte stream which is why we wanted to produce random bytes. </p>
+      <p>A sorting of CA rules was proposed by Langton, he derived a parameter from the base k representation of the rule number. It gives the fractional representation of one arbitrary chosen quiescent state as opposed to the total number of sub-rules. $$\lambda = \frac{k^{2r+1} - n_q }{k^{2r+1}} $$ This lambda parameter seems to be a nice measure for complexity of the rule and we will use it to sort our results per rule.</p>
+      <h4>Mean</h4>
+      <p>A first easy measure for randomness is the mean bit. A random bit sequence should have a mean bit value of \(.5\) since we want equal chance for a 0 or 1 state.  If it deviates from \(.5\) we have consistently more of one of the two states. In the image below we see the results for all 256 elementary CA rules. </p>
+      <figure>
+        <img src="plots/mean-langton.svg" alt="Mean against the Langton parameter" width="500">
+       </figure>
 
-      <h3>Results</h3>
+      <h4>Monte-Carlo Pi</h4>
+      <p>A second measure is the stochastic determination of the number \(\pi\), which is done by randomly placing samples in a square domain and checking if it is within a radius from the center of the square equal to half of the side of the square. The percentage of hits is used to calculate the value of \(\pi\). </p>
+
+      <h4>Entropy</h4>
+      <p>The entropy of a rule is defined as the average number of bits per character it creates. It tells us how much the produced byte stream could be compressed. For a normalized measure of the entropy between 0 and 1 we need to divide by 8 (bits per byte). Below  </p>
+      <figure>
+       <img src="plots/entropy-langton.svg" alt="Entropy against the Langton parameter" width="500">
+      </figure>
+
+      <h4>Chi-square (p-value)</h4>
+      <p></p>
+      <figure>
+        <img src="plots/chisquare-langton.svg" alt="Chi Square against the Langton parameter" width="500">
+      </figure>
+
+      <h3>What came out?</h3>
+
+      <p>The earlier mentioned paper [2] found a set of 28 random rules: </p>
+      <ul>
+      <li>[15, 30, 45, 60, 75, 85, 86, 89, 90, 101, 102, 105, 106, 120, 135, 149, 150, 153, 154, 165, 166, 169, 170, 180, 195, 210, 225, 240]</li>
+      </ul>
+
+      <p>Using our Chi-square test results, we found a set of 19 random rules: </p>
+      <ul>
+      <li>[30, 45, 60, 75, 86, 90, 102, 105, 106, 122, 135, 149, 150, 153, 161, 165, 169, 195, 225]</li>
+      </ul>
+      <p>This set has 17 rules in common with the paper, only rule 122 and 161 are "new".
+      The rules {101, 166, 170, 15, 240, 210, 180, 85, 120, 89, 154} found by the paper did not pass our Chi-square test.</p>
+      <br \>
+
+
+      <p>Top 10 rules based on the Chi-square test:</p>
+      <div>
+        <table class="dataframe" border="1">
+          <thead>
+            <tr style="text-align: right; padding: 3px">
+              <th></th>
+              <th>pi_deviation</th>
+              <th>mean_deviation</th>
+              <th>p_value_deviation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>195</th>
+              <td>0.001276</td>
+              <td>0.082446</td>
+              <td>0.013847</td>
+            </tr>
+            <tr>
+              <th>86</th>
+              <td>0.008420</td>
+              <td>0.109408</td>
+              <td>0.045251</td>
+            </tr>
+            <tr>
+              <th>149</th>
+              <td>0.010588</td>
+              <td>0.205130</td>
+              <td>0.052170</td>
+            </tr>
+            <tr>
+              <th>225</th>
+              <td>0.000460</td>
+              <td>0.028304</td>
+              <td>0.054775</td>
+            </tr>
+            <tr>
+              <th>150</th>
+              <td>0.009388</td>
+              <td>0.132046</td>
+              <td>0.073749</td>
+            </tr>
+            <tr>
+              <th>135</th>
+              <td>0.017645</td>
+              <td>0.111598</td>
+              <td>0.165868</td>
+            </tr>
+            <tr>
+              <th>60</th>
+              <td>0.003140</td>
+              <td>0.049358</td>
+              <td>0.215533</td>
+            </tr>
+            <tr>
+              <th>75</th>
+              <td>0.004052</td>
+              <td>0.026974</td>
+              <td>0.224544</td>
+            </tr>
+            <tr>
+              <th>122</th>
+              <td>0.004828</td>
+              <td>0.114394</td>
+              <td>0.227844</td>
+            </tr>
+            <tr>
+              <th>30</th>
+              <td>0.007324</td>
+              <td>0.009032</td>
+              <td>0.270481</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
 
       <h3>Conclusion </h3>
 
+      <h3>Lessons learned</h3>
+      <p>\(3^{3^{3}}\) is  lot... \(\approx 10^{13}\)</p>
+      <p>C would probably have been a better choice than Python</p>
 
       <h3>References</h3>
-      [1]
-      [2] When are cellular automata random?,
-
+      <p>[1] <br>
+      [2] When are cellular automata random?, <br \>
+      [3] <a href="http://fourmilab.ch/random/" target="_blank">ENT</a>, A Pseudorandom Number Sequence Test Program
+      </p>
       <footer>
         <div class="row">
           <hr>

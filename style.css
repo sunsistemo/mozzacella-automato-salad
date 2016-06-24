@@ -11,3 +11,24 @@ footer {
     color: #777;
     font-size: 14px;
 }
+
+p.example {
+    margin: 40px;
+    padding: 10px;
+    font-style: italic;
+    background-color: rgb(230,230,255);
+}
+
+span.mono {
+    font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+    font-size: 24px;
+}
+
+span.mono-small {
+    font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+    font-size: 16px;
+}
+
+tr {padding-left:3px}
+th {padding: 3px;
+   text-align:center}
