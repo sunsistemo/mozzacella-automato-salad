@@ -153,6 +153,7 @@ let ca_bits = Array(Math.floor(canvas_bits.height / dx));
 
 let bits = [];                  // collect 8 of them
 let nums = [];
+let sum = 0;
 
 
 function start_bits() {
@@ -165,6 +166,7 @@ function start_bits() {
     ca_bits = init_ca(ca_bits);
     bits = [];
     nums = [];
+    sum = 0;
     set_style(k);
     draw_ca(ctx_bits, ca_bits, id, true);
     draw_bits(id);
@@ -173,17 +175,23 @@ function start_bits() {
 // animate assembling of bits to random numbers
 let span_bits = document.getElementById("span_bits");
 let span_nums = document.getElementById("span_nums");
+let span_bytes = document.getElementById("bytes");
+let span_mean = document.getElementById("mean");
 
 
 function draw_bits(id) {
     let bitText = bits.join("");
     let numText = nums.slice(Math.max(0, nums.length - 32)).join(", ");
     if (bits.length >= 8) {
-        nums.push(parseInt(bitText, 2));
+        let n = parseInt(bitText, 2);
+        nums.push(n);
+        sum = sum + n;
         bits = [];
     }
     span_bits.textContent = bitText;
     span_nums.textContent = numText;
+    span_bytes.textContent = nums.length.toString();
+    span_mean.textContent = (sum / nums.length).toString();
     if (running.indexOf(id) > -1) {
         window.setTimeout(draw_bits, 100, id);
     }
