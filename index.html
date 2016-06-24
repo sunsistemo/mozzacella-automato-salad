@@ -67,6 +67,11 @@
       <br>
       <p>Wolfram also conducted a systematic study on a specific kind of one dimensional Cellular Automata with radius \(r = 1\) and number of states \(k = 2\), called the elementary CA. By noting how some rules end up in a loop of a finite amount of states or in one single state and others show chaotic or complex behaviour, he classified the rules into four classes according to their behaviour.</p>
 
+      <h3>Hypothesis</h3>
+      The hypothesis stated for this project is the following: "Is it easier to use less elementary CAs for random number generation?". A supporting reason for this hypothesis is that we expect to get more chaos out of our CAs when we introduce more degrees of freedom.
+      
+      
+      
       <h3>Random numbers from CA's</h3>
       <p> The existence of Wolfram class 3 and 4 (respectively chaotic and complex) indicate that we can use Cellular Automata for the generation of random numbers. When we want to generate a random number with a CA we want to use the It is easy to generate a bit from a CA with \(k = 2\), we can select one cell, using the new state it generates each time step as a new bit. When we want to choose a random integer in a given range we need to make sure that we take enough bits. However we also need to take care that we keep our sample space homogeneous when mapping the found states to an integer.  </p>
       <p class="example">In the case of \(k = 3\) we generate trits and if we want to find for example an integer between 0 and 9 it fits exactly in two trits. However an interval of size 10 does not and we would have to sample three trits. As we now have 27 possible values we need to decide what to do with all values above 10. We could take the found ternary number modulo 10 (the interval), however this would mean that the numbers 0 to 6 are over represented. We could also just throw away every number above 10 and try to generate another number. In this case we would throw away almost two third of the found numbers which is very wasteful.  </p>
