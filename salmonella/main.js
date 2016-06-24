@@ -93,7 +93,7 @@ function set_style(k) {
 }
 set_style(k);
 
-function draw_ca(ctx, ca, id) {
+function draw_ca(ctx, ca, id, generate_bits) {
     let size = Math.round(dx * 0.9);
     for (let j = 0; j < ca.length; j++) {
         for (let i = 0; i < STATE.length; i++) {
@@ -106,11 +106,14 @@ function draw_ca(ctx, ca, id) {
     for (let j = 0; j < ca.length - 1; j++) {
         ca[j] = old_ca[j + 1];
     }
+    if (generate_bits === true) {
+        bits.push(STATE[0]);
+    }
     step(rule, r);
     ca[ca.length - 1] = STATE;
 
     if (running.indexOf(id) > -1) {
-        window.setTimeout(draw_ca, 200, ctx, ca, id);
+        window.setTimeout(draw_ca, 100, ctx, ca, id, generate_bits);
     }
 }
 
@@ -136,14 +139,61 @@ function start_1D_CA() {
     rule = generateRule(r, k, ruleNum);
     set_style(k);
     seedState(size, k);
-    init_ca(ca);
+    ca = init_ca(ca);
     draw_ca(ctx, ca, id);
 }
 
-function replace_CA() {
+start_1D_CA();
+
+// CA showing generation of random numbers
+let canvas_bits = document.getElementById("CA_bits");
+let ctx_bits = canvas_bits.getContext("2d");
+let size_bits = Math.floor(canvas_bits.width / dx);
+let ca_bits = Array(Math.floor(canvas_bits.height / dx));
+
+let bits = [];                  // collect 8 of them
+let nums = [];
+
+
+function start_bits() {
     running.pop();
-    start_1D_CA();
+    let id = String(new Date().getTime());
+    running.push(id);
+    [r, k, ruleNum] = [1, 2, 30];
+    rule = generateRule(r, k, ruleNum);
+    seedState(size, k);
+    ca_bits = init_ca(ca_bits);
+    bits = [];
+    nums = [];
+    set_style(k);
+    draw_ca(ctx_bits, ca_bits, id, true);
+    draw_bits(id);
 }
+
+// animate assembling of bits to random numbers
+let span_bits = document.getElementById("span_bits");
+let span_nums = document.getElementById("span_nums");
+
+
+function draw_bits(id) {
+    let bitText = bits.join("");
+    let numText = nums.slice(Math.max(0, nums.length - 32)).join(", ");
+    if (bits.length >= 8) {
+        nums.push(parseInt(bitText, 2));
+        bits = [];
+    }
+    span_bits.textContent = bitText;
+    span_nums.textContent = numText;
+    if (running.indexOf(id) > -1) {
+        window.setTimeout(draw_bits, 100, id);
+    }
+}
+
+module.exports = {
+    "start_1D_CA": start_1D_CA,
+    "start_bits": start_bits
+};
+
 
 function draw_single(ctx, t) {
     let dx = 20;
@@ -163,11 +213,3 @@ function draw_single(ctx, t) {
     step(rule, r);
     window.setTimeout(draw_ca, 100, ctx, t + 1);
 }
-
-
-start_1D_CA();
-
-
-module.exports = {
-    "start_1D_CA": start_1D_CA
-};

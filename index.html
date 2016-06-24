@@ -61,10 +61,11 @@
             <input id="input_random" type="checkbox" value="">
             Random Rule
           </label>
-          <button type="button" class="btn btn-success" onclick="CA.start_1D_CA()">Restart</button>
+          <button type="button" class="btn btn-success" onclick="CA.start_1D_CA()">Start</button>
         </div>
       </div>
       <br>
+
       <p>Wolfram also conducted a systematic study on a specific kind of one dimensional Cellular Automata with radius \(r = 1\) and number of states \(k = 2\), called the elementary CA. By noting how some rules end up in a loop of a finite amount of states or in one single state and others show chaotic or complex behaviour, he classified the rules into four classes according to their behaviour.</p>
 
       <h3>Random numbers from CA's</h3>
@@ -72,7 +73,22 @@
       <p class="example">In the case of \(k = 3\) we generate trits and if we want to find for example an integer between 0 and 9 it fits exactly in two trits. However an interval of size 10 does not and we would have to sample three trits. As we now have 27 possible values we need to decide what to do with all values above 10. We could take the found ternary number modulo 10 (the interval), however this would mean that the numbers 0 to 6 are over represented. We could also just throw away every number above 10 and try to generate another number. In this case we would throw away almost two third of the found numbers which is very wasteful.  </p>
 
         <p>There are of course other (more advanced) methods to generate numbers from the CA states however the previously mentioned is in most cases easy and fast. Wolfram propagated that for the elementary CA's, rule 30 is a proper random number generator and later research by Coe, Ahnert and Fink [2] who searched through all elementary CA rules confirmed this and they formed a list of random generator elementary CA rules.
-      </p>
+        </p>
+
+        <br>
+        <div class="text-center">
+          <canvas id="CA_bits" width="800" height="300">Rule 30 Generating Bits</canvas>
+          <button type="button" class="btn btn-success" onclick="CA.start_bits()">Start</button>
+        </div>
+
+        <div class="col-md-2">
+          <span class="mono" id="span_bits"></span>
+        </div>
+
+        <div class="col-md-8">
+          <span class="mono-small" id="span_nums"></span>
+        </div>
+        <br><br><br>
 
       <h3>Randomness tests</h3>
       <p>
