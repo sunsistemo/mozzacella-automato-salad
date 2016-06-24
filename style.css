@@ -18,3 +18,6 @@ p.example {
     font-style: italic;
     background-color: rgb(230,230,255);
 }
+tr {padding-left:3px}
+th {padding: 3px;
+   text-align:center}
