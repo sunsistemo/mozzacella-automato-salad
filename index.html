@@ -79,7 +79,7 @@
         <p>There are of course other (more advanced) methods to generate numbers from the CA states however the previously mentioned is in most cases easy and fast. Wolfram propagated that for the elementary CA's, rule 30 is a proper random number generator and later research by Coe, Ahnert and Fink [2] who searched through all elementary CA rules confirmed this and they formed a list of random generator elementary CA rules.
         </p>
 
-        <p>For testing our random numbers we needed a byte stream so we had to convert our series of bits, trits or units of other bases to bytes and did this by gathering enough states to fill a byte (8 bits, 5 trits, etc.) and then get the modulo 256 of the found base k number. If the number however was greater than n times 256, with n the number of bytes that fully fitted inside our base k number, it was discarded and a new number was generated. There are of course other (more advanced) methods to generate numbers from the CA states however the previously mentioned is in most cases easy and fast. Wolfram propagated that for the elementary CA's, rule 30 is a proper random number generator and later research by Coe, Ahnert and Fink [2] who searched through all elementary CA rules confirmed this and they formed a list of random generator elementary CA rules.
+        <p>For testing our random numbers we needed a byte stream so we had to convert our series of bits, trits or units of other bases to bytes and did this by gathering enough states to fill a byte (8 bits, 5 trits, etc.) and then get the modulo 256 of the found base k number. If the number however was greater than n times 256, with n the number of bytes that fully fitted inside our base k number, it was discarded and a new number was generated. There are of course other (more advanced) methods to generate numbers from the CA states however the previously mentioned is in most cases easy and fast. Wolfram propagated that for the elementary CA's, rule 30 is a proper random number generator and later research by Coe, Ahnert and Fink [2] who searched through all elementary CA rules confirmed this and they formed a list of random generator elementary CA rules. Rule 30 was also used as the default PRNG in Mathematica versions prior to 6.0 [4]. They used a CA size of 261, we will also use this size for the 1D CA's we will test.
         </p>
 
         <br>
@@ -113,7 +113,7 @@
         Randomness can be defined in various ways. One definition does not necessarily imply the other as well and several kinds of randomness can be used for different purposes. For example when we do a Monte-Carlo simulation we want the random numbers to be evenly spaced over the domain, however true random numbers often show large gaps. On the other hand for cryptography we need random numbers for which the algorithm is not easily derived but which can be reproduced if we know the algorithm and the seed. We used various measures all bundled in the program Ent. Ent took as input a byte stream which is why we wanted to produce random bytes. </p>
       <p>A sorting of CA rules was proposed by Langton, he derived a parameter from the base k representation of the rule number. It gives the fractional representation of one arbitrary chosen quiescent state as opposed to the total number of sub-rules. $$\lambda = \frac{k^{2r+1} - n_q }{k^{2r+1}} $$ This lambda parameter seems to be a nice measure for complexity of the rule and we will use it to sort our results per rule.</p>
       <h4>Mean</h4>
-      <p>A first easy measure for randomness is the mean bit. A random bit sequence should have a mean bit value of \(.5\) since we want equal chance for a 0 or 1 state.  If it deviates from \(.5\) we have consistently more of one of the two states. In the image below we see the results for all 256 elementary CA rules. </p>
+      <p>A first easy measure for randomness is the mean bit. A random bit sequence should have a mean bit value of \(0.5\) since we want equal chance for a 0 or 1 state.  If it deviates from \(0.5\) we have consistently more of one of the two states. In the image below we see the results for all 256 elementary CA rules. </p>
       <figure>
         <img src="plots/mean-langton.svg" alt="Mean against the Langton parameter" width="500">
        </figure>
@@ -225,17 +225,22 @@
         </table>
       </div>
 
+      <h3>Conclusion</h3>
 
-      <h3>Conclusion </h3>
-
-      <h3>Lessons learned</h3>
-      <p>\(3^{3^{3}}\) is  lot... \(\approx 10^{13}\)</p>
-      <p>C would probably have been a better choice than Python</p>
+      <h3>Lessons learned &amp; Recommendations</h3>
+      <p>We wanted to statistically test random number generators. From the literature [1] we learned that do this properly, you'd run your RNG both through the Diehard [6] and NIST [7] statistical test suites. Our implementation was however very slow, generating only about 1.4 KiB/s, while the tests require more than 2 GiB of random numbers. Given more time, we'd reimplement the PRNG in C.</p>
+      <p>\(3^{3^{3}}=7625597484987 \approx 10^{13} \) is  a lot to sample from... </p>
+      <p></p>
 
       <h3>References</h3>
-      <p>[1] <br>
-      [2] When are cellular automata random?, <br \>
-      [3] <a href="http://fourmilab.ch/random/" target="_blank">ENT</a>, A Pseudorandom Number Sequence Test Program
+      <p>
+        [1] <a href="http://ithare.com/random-number-generation/">Random Number Generation</a><br>
+        [2] <i>When are cellular automata random?</i>, J. B. Coe , S. E. Ahnert  and T. M. A. Fink. <br>
+        [3] <a href="http://fourmilab.ch/random/" target="_blank">ENT</a>, A Pseudorandom Number Sequence Test Program <br>
+        [4] <a href="https://reference.wolfram.com/language/tutorial/RandomNumberGeneration.html"><i>Mathematica Reference</i></a> <br>
+        [5] <i>Cellular Automata: Is Rule 30 Random?</i>, Dustin Gage, Elizabeth Laub, Briana Mcgarry. <br>
+        [6] <a href="https://en.wikipedia.org/wiki/Diehard_tests">Diehard Tests</a> <br>
+        [7] <a href="http://csrc.nist.gov/groups/ST/toolkit/rng/documentation_software.html">A Statistical Test Suite for the Validation of Random Number Generators and Pseudo Random Number Generators for Cryptographic Applications</a>
       </p>
       <footer>
         <div class="row">
