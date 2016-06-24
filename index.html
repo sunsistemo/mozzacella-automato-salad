@@ -68,11 +68,18 @@
 
       <p>Wolfram also conducted a systematic study on a specific kind of one dimensional Cellular Automata with radius \(r = 1\) and number of states \(k = 2\), called the elementary CA. By noting how some rules end up in a loop of a finite amount of states or in one single state and others show chaotic or complex behaviour, he classified the rules into four classes according to their behaviour.</p>
 
+      <h3>Hypothesis</h3>
+      <p>The hypothesis stated for this project is the following: "Is it easier to use less elementary CAs for random number generation?". A supporting reason for this hypothesis is that we expect to get more chaos out of our CAs when we introduce more degrees of freedom.</p>
+
       <h3>Random numbers from CA's</h3>
       <p> The existence of Wolfram class 3 and 4 (respectively chaotic and complex) indicate that we can use Cellular Automata for the generation of random numbers. When we want to generate a random number with a CA we want to use the It is easy to generate a bit from a CA with \(k = 2\), we can select one cell, using the new state it generates each time step as a new bit. When we want to choose a random integer in a given range we need to make sure that we take enough bits. However we also need to take care that we keep our sample space homogeneous when mapping the found states to an integer.  </p>
+
       <p class="example">In the case of \(k = 3\) we generate trits and if we want to find for example an integer between 0 and 9 it fits exactly in two trits. However an interval of size 10 does not and we would have to sample three trits. As we now have 27 possible values we need to decide what to do with all values above 10. We could take the found ternary number modulo 10 (the interval), however this would mean that the numbers 0 to 6 are over represented. We could also just throw away every number above 10 and try to generate another number. In this case we would throw away almost two third of the found numbers which is very wasteful.  </p>
 
         <p>There are of course other (more advanced) methods to generate numbers from the CA states however the previously mentioned is in most cases easy and fast. Wolfram propagated that for the elementary CA's, rule 30 is a proper random number generator and later research by Coe, Ahnert and Fink [2] who searched through all elementary CA rules confirmed this and they formed a list of random generator elementary CA rules.
+        </p>
+
+        <p>For testing our random numbers we needed a byte stream so we had to convert our series of bits, trits or units of other bases to bytes and did this by gathering enough states to fill a byte (8 bits, 5 trits, etc.) and then get the modulo 256 of the found base k number. If the number however was greater than n times 256, with n the number of bytes that fully fitted inside our base k number, it was discarded and a new number was generated. There are of course other (more advanced) methods to generate numbers from the CA states however the previously mentioned is in most cases easy and fast. Wolfram propagated that for the elementary CA's, rule 30 is a proper random number generator and later research by Coe, Ahnert and Fink [2] who searched through all elementary CA rules confirmed this and they formed a list of random generator elementary CA rules.
         </p>
 
         <br>
@@ -92,19 +99,19 @@
 
       <h3>Randomness tests</h3>
       <p>
-        Randomness can be defined in various ways. One definition does not necessarily imply the other as well and several kinds of randomness can be used for different purposes. For example when we do a Monte-Carlo simulation we want the random numbers to be evenly spaced over the domain, however true random numbers often show large gaps. On the other hand for cryptography we need random numbers for which the algorithm is not easily derived but which can be reproduced if we know the algorithm and the seed.</p>
-
+        Randomness can be defined in various ways. One definition does not necessarily imply the other as well and several kinds of randomness can be used for different purposes. For example when we do a Monte-Carlo simulation we want the random numbers to be evenly spaced over the domain, however true random numbers often show large gaps. On the other hand for cryptography we need random numbers for which the algorithm is not easily derived but which can be reproduced if we know the algorithm and the seed. We used various measures all bundled in the program Ent. Ent took as input a byte stream which is why we wanted to produce random bytes. </p>
+      <p>A sorting of CA rules was proposed by Langton, he derived a parameter from the base k representation of the rule number. It gives the fractional representation of one arbitrary chosen quiescent state as opposed to the total number of sub-rules. $$\lambda = \frac{k^{2r+1} - n_q }{k^{2r+1}} $$ This lambda parameter seems to be a nice measure for complexity of the rule and we will use it to sort our results per rule.</p>
       <h4>Mean</h4>
-      <p>A first easy measure for randomness is the mean bit. A random number should have a mean bit value of \(.5\) since we want equal chance for a 0 or 1 state.  If it deviates from \(.5\) we have consistently more of one of the states.  </p>
+      <p>A first easy measure for randomness is the mean bit. A random bit sequence should have a mean bit value of \(.5\) since we want equal chance for a 0 or 1 state.  If it deviates from \(.5\) we have consistently more of one of the two states. In the image below we see the results for all 256 elementary CA rules. </p>
       <figure>
         <img src="plots/mean-langton.svg" alt="Mean against the Langton parameter" width="500">
        </figure>
 
       <h4>Monte-Carlo Pi</h4>
-      <p></p>
+      <p>A second measure is the stochastic determination of the number \(\pi\), which is done by randomly placing samples in a square domain and checking if it is within a radius from the center of the square equal to half of the side of the square. The percentage of hits is used to calculate the value of \(\pi\). </p>
 
       <h4>Entropy</h4>
-      <p></p>
+      <p>The entropy of a rule is defined as the average number of bits per character it creates. It tells us how much the produced byte stream could be compressed. For a normalized measure of the entropy between 0 and 1 we need to divide by 8 (bits per byte). Below  </p>
       <figure>
        <img src="plots/entropy-langton.svg" alt="Entropy against the Langton parameter" width="500">
       </figure>
@@ -116,10 +123,26 @@
       </figure>
 
       <h3>What came out?</h3>
+
+      <p>The earlier mentioned paper [2] found a set of 28 random rules: </p>
+      <ul>
+      <li>[15, 30, 45, 60, 75, 85, 86, 89, 90, 101, 102, 105, 106, 120, 135, 149, 150, 153, 154, 165, 166, 169, 170, 180, 195, 210, 225, 240]</li>
+      </ul>
+
+      <p>Using our Chi-square test results, we found a set of 19 random rules: </p>
+      <ul>
+      <li>[30, 45, 60, 75, 86, 90, 102, 105, 106, 122, 135, 149, 150, 153, 161, 165, 169, 195, 225]</li>
+      </ul>
+      <p>This set has 17 rules in common with the paper, only rule 122 and 161 are "new".
+      The rules {101, 166, 170, 15, 240, 210, 180, 85, 120, 89, 154} found by the paper did not pass our Chi-square test.</p>
+      <br \>
+
+
+      <p>Top 10 rules based on the Chi-square test:</p>
       <div>
         <table class="dataframe" border="1">
           <thead>
-            <tr style="text-align: right;">
+            <tr style="text-align: right; padding: 3px">
               <th></th>
               <th>pi_deviation</th>
               <th>mean_deviation</th>
@@ -194,11 +217,15 @@
 
       <h3>Conclusion </h3>
 
+      <h3>Lessons learned</h3>
+      <p>\(3^{3^{3}}\) is  lot... \(\approx 10^{13}\)</p>
+      <p>C would probably have been a better choice than Python</p>
 
       <h3>References</h3>
-      [1]
-      [2] When are cellular automata random?,
-
+      <p>[1] <br>
+      [2] When are cellular automata random?, <br \>
+      [3] <a href="http://fourmilab.ch/random/" target="_blank">ENT</a>, A Pseudorandom Number Sequence Test Program
+      </p>
       <footer>
         <div class="row">
           <hr>

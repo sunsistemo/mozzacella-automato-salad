@@ -28,3 +28,7 @@ span.mono-small {
     font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
     font-size: 16px;
 }
+
+tr {padding-left:3px}
+th {padding: 3px;
+   text-align:center}
