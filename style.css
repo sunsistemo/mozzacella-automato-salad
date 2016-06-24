@@ -30,5 +30,13 @@ span.mono-small {
 }
 
 tr {padding-left:3px}
-th {padding: 3px;
-   text-align:center}
+th {
+    padding: 3px;
+    text-align:center;
+}
+
+div.twocol {
+        -webkit-column-count: 2; /* Chrome, Safari, Opera */
+        -moz-column-count: 2; /* Firefox */
+        column-count: 2;
+}

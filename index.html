@@ -111,7 +111,9 @@
       <h3>Randomness tests</h3>
       <p>
         Randomness can be defined in various ways. One definition does not necessarily imply the other as well and several kinds of randomness can be used for different purposes. For example when we do a Monte-Carlo simulation we want the random numbers to be evenly spaced over the domain, however true random numbers often show large gaps. On the other hand for cryptography we need random numbers for which the algorithm is not easily derived but which can be reproduced if we know the algorithm and the seed. We used various measures all bundled in the program Ent. Ent took as input a byte stream which is why we wanted to produce random bytes. </p>
-      <p>A sorting of CA rules was proposed by Langton, he derived a parameter from the base k representation of the rule number. It gives the fractional representation of one arbitrary chosen quiescent state as opposed to the total number of sub-rules. $$\lambda = \frac{k^{2r+1} - n_q }{k^{2r+1}} $$ This lambda parameter seems to be a nice measure for complexity of the rule and we will use it to sort our results per rule.</p>
+      <p>A sorting of CA rules was proposed by Langton, he derived a parameter from the base k representation of the rule number. It gives the fractional representation of one arbitrary chosen quiescent state as opposed to the total number of sub-rules. $$\lambda = \frac{k^{2r+1} - n_q }{k^{2r+1}} $$ This lambda parameter seems to be a nice measure for complexity of the rule and we will use it to sort our results per rule. We traversed the full rule space for the elementary CA again and performed numerous statistical tests on each rule. The results of these tests are plotted against Langton parameter with in red the set we selected to be random enough.</p>
+
+      <div class="twocol">
       <h4>Mean</h4>
       <p>A first easy measure for randomness is the mean bit. A random bit sequence should have a mean bit value of \(.5\) since we want equal chance for a 0 or 1 state.  If it deviates from \(.5\) we have consistently more of one of the two states. In the image below we see the results for all 256 elementary CA rules. </p>
       <figure>
@@ -120,19 +122,34 @@
 
       <h4>Monte-Carlo Pi</h4>
       <p>A second measure is the stochastic determination of the number \(\pi\), which is done by randomly placing samples in a square domain and checking if it is within a radius from the center of the square equal to half of the side of the square. The percentage of hits is used to calculate the value of \(\pi\). </p>
+      <figure>
+        <img src="plots/monte-carlo-langton.svg" alt="Monte-Carlo pi against the Langton parameter" width="500">
+       </figure>
+      </div>
 
+      <div class="twocol">
       <h4>Entropy</h4>
-      <p>The entropy of a rule is defined as the average number of bits per character it creates. It tells us how much the produced byte stream could be compressed. For a normalized measure of the entropy between 0 and 1 we need to divide by 8 (bits per byte). Below  </p>
+      <p>The entropy of a rule is defined as the average number of bits per character it creates. It tells us how much the produced byte stream could be compressed. For a normalized measure of the entropy between 0 and 1 we need to divide by 8 (bits per byte). The results for the 256 elementary CA rules is plotted below. We can see that all of our selected random rules have an entropy of nearly one. </p>
       <figure>
        <img src="plots/entropy-langton.svg" alt="Entropy against the Langton parameter" width="500">
       </figure>
 
-      <h4>Chi-square (p-value)</h4>
-      <p></p>
+      <h4>Chi-square</h4>
+      <p>The Chi-square test is the final test and said to be most sensitive for errors in pseudo random number generators. It computes the Chi-square distribution of the stream of bytes and returns it as a \(\chi^{2}\) value and accompanying p_value. Even though we eventually use the p-value to select our rules, the \(\chi^{2}\) distribution is interesting to see since we find a large gap between the selected values and the rest. </p>
       <figure>
         <img src="plots/chisquare-langton.svg" alt="Chi Square against the Langton parameter" width="500">
       </figure>
+      </div>
 
+
+      <h4> P-value </h4>
+      <p>The p-value is calculated from the \(\chi^{2}\) value using the \(\chi^{2}\) distribution. It tells us how often a truly random sequence would differ from the measured value. We interpret this as the degree to which the sequence is probably non-random. Values outside the range 0.1 - 0.9 are suspect to being non random. We used this p-value to select our set of 19 proper random elementary CA rules which are shown red in all of the preceding graphs.
+      </p>
+      <figure>
+        <img src="plots/p-value-langton.svg" alt="P-value against the Langton parameter" width="500">
+      </figure>
+
+      <p>We see that our p-value selection scores also the best on the other tests. And other rules have a p-value of either very close one or zero.</p>
       <h3>What came out?</h3>
 
       <p>The earlier mentioned paper [2] found a set of 28 random rules: </p>
@@ -145,7 +162,7 @@
       <li>[30, 45, 60, 75, 86, 90, 102, 105, 106, 122, 135, 149, 150, 153, 161, 165, 169, 195, 225]</li>
       </ul>
       <p>This set has 17 rules in common with the paper, only rule 122 and 161 are "new".
-      The rules {101, 166, 170, 15, 240, 210, 180, 85, 120, 89, 154} found by the paper did not pass our Chi-square test.</p>
+      The rules {101, 166, 170, 15, 240, 210, 180, 85, 120, 89, 154} found by the paper did not pass our Chi-square test. And thus we want to reject them as being a good random number generator.</p>
       <br \>
 
 
@@ -225,8 +242,18 @@
         </table>
       </div>
 
+      <h3>Three Colours</h3>
+      <p>We also explored other rule spaces, for example the \(r = 1\) \(k = 3\) rules. The number of possible rules for this case increases from 256 to \(7 * 10^{12}\), which makes it impossible to explore every rule. We sampled 1400 random rules from the possibilities and plotted the entropy and chi square again against the Langton parameter. </p>
+      <figure>
+        <img src="plots/3c-entropy-langton.svg" alt="Entropy against the Langton parameter" width="500">
+      </figure>
+      <figure>
+        <img src="plots/3c-chisquare-langton.svg" alt="Chi square against the Langton parameter" width="500">
+      </figure>
+      <p>Although now we have almost six times as much data, we must keep in mind that we only sample a \(10^{-10}\) fraction of the full rulespace.This is hardly enough to say anything useful about the tests. However we see that the entropy distribution is of a similar shape and approaches 1 quite close. However, the p-value of every single rule was zero and we see from the chi square distribution that we do not approach a small enough \(\chi^{2}\) value and if we compare it to the 2 color case, we see we only have sampled in the top part of the plot. </p>
 
       <h3>Conclusion </h3>
+      The hypothesis that we get better or more random generators for more degrees of freedom cannot be accepted or rejected since we do not have enough results from more degrees of freedom. This would take too long to run for our two week project. However we narrowed down the set of elementary random number generators and added two new ones as well. Rule 30 does not seem to perform extraordinarily well as opposed to other rules
 
       <h3>Lessons learned</h3>
       <p>\(3^{3^{3}}\) is  lot... \(\approx 10^{13}\)</p>
