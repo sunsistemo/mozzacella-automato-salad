@@ -2,7 +2,7 @@
 set -e
 
 git checkout gh-pages
-git merge master
+git merge master -m "merge master"
 ./node_modules/.bin/webpack --optimize-minimize
 git add -A
 git add --force automato.js
