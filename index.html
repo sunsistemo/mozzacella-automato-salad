@@ -113,39 +113,46 @@
         Randomness can be defined in various ways. One definition does not necessarily imply the other as well and several kinds of randomness can be used for different purposes. For example when we do a Monte-Carlo simulation we want the random numbers to be evenly spaced over the domain, however true random numbers often show large gaps. On the other hand for cryptography we need random numbers for which the algorithm is not easily derived but which can be reproduced if we know the algorithm and the seed. We used various measures all bundled in the program Ent. Ent took as input a byte stream which is why we wanted to produce random bytes. </p>
       <p>A sorting of CA rules was proposed by Langton, he derived a parameter from the base k representation of the rule number. It gives the fractional representation of one arbitrary chosen quiescent state as opposed to the total number of sub-rules. $$\lambda = \frac{k^{2r+1} - n_q }{k^{2r+1}} $$ This lambda parameter seems to be a nice measure for complexity of the rule and we will use it to sort our results per rule. We traversed the full rule space for the elementary CA again and performed numerous statistical tests on each rule. The results of these tests are plotted against Langton parameter with in red the set we selected to be random enough.</p>
 
-      <div class="twocol">
-      <h4>Mean</h4>
-      <p>A first easy measure for randomness is the mean bit. A random bit sequence should have a mean bit value of \(0.5\) since we want equal chance for a 0 or 1 state.  If it deviates from \(0.5\) we have consistently more of one of the two states. In the image below we see the results for all 256 elementary CA rules. </p>
-      <figure>
-        <img src="plots/mean-langton.svg" alt="Mean against the Langton parameter" width="500">
-       </figure>
+      <div class="row">
+        <div class="col-md-6">
+          <h4>Mean</h4>
+          <p>A first easy measure for randomness is the mean bit. A random bit sequence should have a mean bit value of \(0.5\) since we want equal chance for a 0 or 1 state.  If it deviates from \(0.5\) we have consistently more of one of the two states. In the image below we see the results for all 256 elementary CA rules. </p>
+          <figure>
+            <img src="plots/mean-langton.svg" alt="Mean against the Langton parameter" width="500">
+          </figure>
+        </div>
 
-      <h4>Monte-Carlo Pi</h4>
-      <p>A second measure is the stochastic determination of the number \(\pi\), which is done by randomly placing samples in a square domain and checking if it is within a radius from the center of the square equal to half of the side of the square. The percentage of hits is used to calculate the value of \(\pi\). </p>
-      <figure>
-        <img src="plots/monte-carlo-langton.svg" alt="Monte-Carlo pi against the Langton parameter" width="500">
-       </figure>
+        <div class="col-md-6">
+          <h4>Monte-Carlo Pi</h4>
+          <p>A second measure is the stochastic determination of the number \(\pi\), which is done by randomly placing samples in a square domain and checking if it is within a radius from the center of the square equal to half of the side of the square. The percentage of hits is used to calculate the value of \(\pi\). </p>
+          <figure>
+            <img src="plots/monte-carlo-langton.svg" alt="Monte-Carlo pi against the Langton parameter" width="500">
+          </figure>
+        </div>
       </div>
 
-      <div class="twocol">
-      <h4>Entropy</h4>
-      <p>The entropy of a rule is defined as the average number of bits per character it creates. It tells us how much the produced byte stream could be compressed. For a normalized measure of the entropy between 0 and 1 we need to divide by 8 (bits per byte). The results for the 256 elementary CA rules is plotted below. We can see that all of our selected random rules have an entropy of nearly one. </p>
-      <figure>
-       <img src="plots/entropy-langton.svg" alt="Entropy against the Langton parameter" width="500">
-      </figure>
+      <div class="row">
+        <div class="col-md-6">
+          <h4>Entropy</h4>
+          <p>The entropy of a rule is defined as the average number of bits per character it creates. It tells us how much the produced byte stream could be compressed. For a normalized measure of the entropy between 0 and 1 we need to divide by 8 (bits per byte). The results for the 256 elementary CA rules is plotted below. We can see that all of our selected random rules have an entropy of nearly one. </p>
+          <figure>
+            <img src="plots/entropy-langton.svg" alt="Entropy against the Langton parameter" width="500">
+          </figure>
+        </div>
 
-      <h4>Chi-square</h4>
-      <p>The Chi-square test is the final test and said to be most sensitive for errors in pseudo random number generators. It computes the Chi-square distribution of the stream of bytes and returns it as a \(\chi^{2}\) value and accompanying p_value. Even though we eventually use the p-value to select our rules, the \(\chi^{2}\) distribution is interesting to see since we find a large gap between the selected values and the rest. </p>
-      <figure>
-        <img src="plots/chisquare-langton.svg" alt="Chi Square against the Langton parameter" width="500">
-      </figure>
+        <div class="col-md-6">
+          <h4>Chi-square</h4>
+          <p>The Chi-square test is the final test and said to be most sensitive for errors in pseudo random number generators. It computes the Chi-square distribution of the stream of bytes and returns it as a \(\chi^{2}\) value and accompanying p_value. Even though we eventually use the p-value to select our rules, the \(\chi^{2}\) distribution is interesting to see since we find a large gap between the selected values and the rest. </p>
+          <figure>
+            <img src="plots/chisquare-langton.svg" alt="Chi Square against the Langton parameter" width="500">
+          </figure>
+        </div>
       </div>
-
 
       <h4> P-value </h4>
       <p>The p-value is calculated from the \(\chi^{2}\) value using the \(\chi^{2}\) distribution. It tells us how often a truly random sequence would differ from the measured value. We interpret this as the degree to which the sequence is probably non-random. Values outside the range 0.1 - 0.9 are suspect to being non random. We used this p-value to select our set of 19 proper random elementary CA rules which are shown red in all of the preceding graphs.
       </p>
-      <figure>
+      <figure class="text-center">
         <img src="plots/p-value-langton.svg" alt="P-value against the Langton parameter" width="500">
       </figure>
 
@@ -167,89 +174,99 @@
 
 
       <p>Top 10 rules based on the Chi-square test:</p>
-      <div>
-        <table class="dataframe" border="1">
-          <thead>
-            <tr style="text-align: right; padding: 3px">
-              <th></th>
-              <th>pi_deviation</th>
-              <th>mean_deviation</th>
-              <th>p_value_deviation</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th>195</th>
-              <td>0.001276</td>
-              <td>0.082446</td>
-              <td>0.013847</td>
-            </tr>
-            <tr>
-              <th>86</th>
-              <td>0.008420</td>
-              <td>0.109408</td>
-              <td>0.045251</td>
-            </tr>
-            <tr>
-              <th>149</th>
-              <td>0.010588</td>
-              <td>0.205130</td>
-              <td>0.052170</td>
-            </tr>
-            <tr>
-              <th>225</th>
-              <td>0.000460</td>
-              <td>0.028304</td>
-              <td>0.054775</td>
-            </tr>
-            <tr>
-              <th>150</th>
-              <td>0.009388</td>
-              <td>0.132046</td>
-              <td>0.073749</td>
-            </tr>
-            <tr>
-              <th>135</th>
-              <td>0.017645</td>
-              <td>0.111598</td>
-              <td>0.165868</td>
-            </tr>
-            <tr>
-              <th>60</th>
-              <td>0.003140</td>
-              <td>0.049358</td>
-              <td>0.215533</td>
-            </tr>
-            <tr>
-              <th>75</th>
-              <td>0.004052</td>
-              <td>0.026974</td>
-              <td>0.224544</td>
-            </tr>
-            <tr>
-              <th>122</th>
-              <td>0.004828</td>
-              <td>0.114394</td>
-              <td>0.227844</td>
-            </tr>
-            <tr>
-              <th>30</th>
-              <td>0.007324</td>
-              <td>0.009032</td>
-              <td>0.270481</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="row row-centered">
+        <div class="col-centered">
+          <table class="dataframe text-center" border="1">
+            <thead>
+              <tr style="text-align: right; padding: 3px">
+                <th></th>
+                <th>pi_deviation</th>
+                <th>mean_deviation</th>
+                <th>p_value_deviation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>195</th>
+                <td>0.001276</td>
+                <td>0.082446</td>
+                <td>0.013847</td>
+              </tr>
+              <tr>
+                <th>86</th>
+                <td>0.008420</td>
+                <td>0.109408</td>
+                <td>0.045251</td>
+              </tr>
+              <tr>
+                <th>149</th>
+                <td>0.010588</td>
+                <td>0.205130</td>
+                <td>0.052170</td>
+              </tr>
+              <tr>
+                <th>225</th>
+                <td>0.000460</td>
+                <td>0.028304</td>
+                <td>0.054775</td>
+              </tr>
+              <tr>
+                <th>150</th>
+                <td>0.009388</td>
+                <td>0.132046</td>
+                <td>0.073749</td>
+              </tr>
+              <tr>
+                <th>135</th>
+                <td>0.017645</td>
+                <td>0.111598</td>
+                <td>0.165868</td>
+              </tr>
+              <tr>
+                <th>60</th>
+                <td>0.003140</td>
+                <td>0.049358</td>
+                <td>0.215533</td>
+              </tr>
+              <tr>
+                <th>75</th>
+                <td>0.004052</td>
+                <td>0.026974</td>
+                <td>0.224544</td>
+              </tr>
+              <tr>
+                <th>122</th>
+                <td>0.004828</td>
+                <td>0.114394</td>
+                <td>0.227844</td>
+              </tr>
+              <tr>
+                <th>30</th>
+                <td>0.007324</td>
+                <td>0.009032</td>
+                <td>0.270481</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <h3>Three Colours</h3>
       <p>We also explored other rule spaces, for example the \(r = 1\) \(k = 3\) rules. The number of possible rules for this case increases from 256 to \(7 * 10^{12}\), which makes it impossible to explore every rule. We sampled 1400 random rules from the possibilities and plotted the entropy and chi square again against the Langton parameter. </p>
-      <figure>
-        <img src="plots/3c-entropy-langton.svg" alt="Entropy against the Langton parameter" width="500">
-      </figure>
-      <figure>
-        <img src="plots/3c-chisquare-langton.svg" alt="Chi square against the Langton parameter" width="500">
-      </figure>
+
+      <div class="row">
+        <div class="col-md-6">
+          <figure>
+            <img src="plots/3c-entropy-langton.svg" alt="Entropy against the Langton parameter" width="500">
+          </figure>
+        </div>
+        <div class="col-md-6">
+          <figure>
+            <img src="plots/3c-chisquare-langton.svg" alt="Chi square against the Langton parameter" width="500">
+          </figure>
+        </div>
+      </div>
+
       <p>Although now we have almost six times as much data, we must keep in mind that we only sample a \(10^{-10}\) fraction of the full rulespace.This is hardly enough to say anything useful about the tests. However we see that the entropy distribution is of a similar shape and approaches 1 quite close. However, the p-value of every single rule was zero and we see from the chi square distribution that we do not approach a small enough \(\chi^{2}\) value and if we compare it to the 2 color case, we see we only have sampled in the top part of the plot. </p>
 
       <h3>Conclusion </h3>
